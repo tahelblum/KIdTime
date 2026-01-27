@@ -502,7 +502,7 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
 // Main App
 export default function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('authToken'));
-  const [user, setUser] = useState<User | null>(null);
+  const [, setUser] = useState<User | null>(null);
 
   const handleLogin = (newToken: string, userData: User) => {
     setToken(newToken);
