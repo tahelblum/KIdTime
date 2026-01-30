@@ -1,7 +1,7 @@
 // src/App.tsx - TimeKids Full Application
 import React, { useState, useEffect } from 'react';
 
-const API_URL = 'https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE';
+const API_URL = 'https://x8ki-letl-twmt.n7.xano.io/api:2X_jlntK';
 
 // Types
 interface Task {
