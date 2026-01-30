@@ -522,3 +522,4 @@ export default function App() {
   }
 
   return <WeeklyView token={token} onLogout={handleLogout} />;
+}
