@@ -61,7 +61,7 @@ const api = {
   },
   
   async toggleTask(token: string, id: number) {
-    const res = await fetch(`${API_URL}/${id}/toggle`, {
+    const res = await fetch(`${API_URL}/tasks/${id}/toggle`, {
       method: 'PATCH',
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -69,7 +69,7 @@ const api = {
   },
   
   async createTask(token: string, task: Omit<Task, 'id' | 'is_done' | 'icon'>) {
-    const res = await fetch(`${API_URL}/create`, {
+    const res = await fetch(`${API_URL}/tasks`, {
       method: 'POST',
       headers: { 
         'Authorization': `Bearer ${token}`,
