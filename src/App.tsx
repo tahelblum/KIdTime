@@ -52,8 +52,8 @@ const api = {
   
   async getTasks(token: string, day?: number) {
     const url = day !== undefined 
-      ? `${API_URL}/tasks/day/${day}` 
-      : `${API_URL}/tasks/week`;
+      ? `${API_URL}/day/${day}` 
+      : `${API_URL}/week`;
     const res = await fetch(url, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -61,7 +61,7 @@ const api = {
   },
   
   async toggleTask(token: string, id: number) {
-    const res = await fetch(`${API_URL}/tasks/${id}/toggle`, {
+    const res = await fetch(`${API_URL}/${id}/toggle`, {
       method: 'PATCH',
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -69,7 +69,7 @@ const api = {
   },
   
   async createTask(token: string, task: Omit<Task, 'id' | 'is_done' | 'icon'>) {
-    const res = await fetch(`${API_URL}/tasks`, {
+    const res = await fetch(`${API_URL}/create`, {
       method: 'POST',
       headers: { 
         'Authorization': `Bearer ${token}`,
@@ -205,9 +205,10 @@ function WeeklyView({ token, onLogout }: { token: string; onLogout: () => void }
   const loadTasks = async () => {
     try {
       const data = await api.getTasks(token);
-      setTasks(data || []);
+      setTasks(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error loading tasks:', err);
+      setTasks([]);
     } finally {
       setLoading(false);
     }
@@ -521,4 +522,3 @@ export default function App() {
   }
 
   return <WeeklyView token={token} onLogout={handleLogout} />;
-}
