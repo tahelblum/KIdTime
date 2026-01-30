@@ -7,7 +7,7 @@ const API_URL = 'https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE';
 interface Task {
   id: number;
   title: string;
-  type: 'school' | 'hobby' | 'free';
+  type: 'school' | 'hobby' | 'free' | 'test';
   day_of_week: number;
   start_time: string;
   end_time: string;
@@ -28,6 +28,7 @@ const typeColors = {
   school: { bg: 'bg-blue-100', border: 'border-blue-300', icon: '📚', barColor: 'bg-blue-400' },
   hobby: { bg: 'bg-green-100', border: 'border-green-300', icon: '⭐', barColor: 'bg-green-400' },
   free: { bg: 'bg-amber-50', border: 'border-amber-200', icon: '🎮', barColor: 'bg-amber-400' },
+  test : { bg: 'bg-pink-50', border: 'border-pink-200', icon: '📝', barColor: 'bg-pink-400' },
 };
 
 // API Functions
@@ -395,6 +396,7 @@ function WeeklyView({ token, onLogout }: { token: string; onLogout: () => void }
         <span>📚 לימודים</span>
         <span>⭐ חוגים</span>
         <span>🎮 חופשי</span>
+        <span>📝 מבחן</span>
       </div>
 
       {/* Add Task Modal */}
@@ -411,7 +413,7 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
   onAdded: () => void;
 }) {
   const [title, setTitle] = useState('');
-  const [type, setType] = useState<'school' | 'hobby' | 'free'>('school');
+  const [type, setType] = useState<'school' | 'hobby' | 'free'| 'test'>('school');
   const [startTime, setStartTime] = useState('08:00');
   const [endTime, setEndTime] = useState('09:00');
   const [loading, setLoading] = useState(false);
@@ -459,6 +461,7 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
             <option value="school">📚 לימודים</option>
             <option value="hobby">⭐ חוג</option>
             <option value="free">🎮 זמן חופשי</option>
+            <option value="test">📝 מבחן</option>
           </select>
           
           <div className="flex gap-2">
