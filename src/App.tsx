@@ -42,7 +42,7 @@ const api = {
     return res.json();
   },
   
-  async signup(email: string, password: string, name: string) {
+  async signup1(email: string, password: string, name: string) {
     const res = await fetch(`${API_URL}/auth/signup1`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
