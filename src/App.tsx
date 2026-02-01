@@ -113,8 +113,8 @@ function LoginScreen({ onLogin }: { onLogin: (token: string, user: User) => void
 
     try {
       const data = isSignup 
-        ? await api.signup1(email, password, name)
-        : await api.login1(email, password);
+        ? await api.signup(email, password, name)
+        : await api.login(email, password);
       
       if (data.authToken) {
         onLogin(data.authToken, data);
