@@ -14,7 +14,7 @@ interface Task {
   end_time: string;
   is_done: boolean;
   frequent: boolean;
-  event_date: date;
+  event_date?: string;
   icon: string;
 }
 
