@@ -54,7 +54,7 @@ const api = {
   async getTasks(token: string, day?: number) {
     const url = day !== undefined 
       ? `${API_URL}/day/${day}` 
-      : `${API_URL}week`;
+      : `${API_URL}/week`;
     const res = await fetch(url, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
