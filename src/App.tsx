@@ -67,14 +67,15 @@ const api = {
     return res.json();
   },
   
-sync toggleTask(token: string, id: number) {
+async toggleTask(token: string, id: number) {
+  // שימי לב לכתובת המדויקת: Toggle_task עם T גדולה וקו תחתון
   const res = await fetch(`${API_URL}/Toggle_task`, {
-    method: 'POST', 
+    method: 'POST', // ב-Xano פונקציות מותאמות אישית הן לרוב POST
     headers: { 
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ task_id: id })
+    body: JSON.stringify({ task_id: id }) // ודאי שב-Xano לשדה הקלט קוראים task_id
   });
 
   if (!res.ok) {
@@ -83,6 +84,7 @@ sync toggleTask(token: string, id: number) {
 
   return res.json();
 },
+  
   async createTask(token: string, task: Omit<Task, 'id' | 'is_done' | 'user_id' | 'icon'>) {
     const res = await fetch(`${API_URL}/task`, {
       method: 'POST',
