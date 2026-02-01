@@ -54,7 +54,7 @@ const api = {
     return res.json();
   },
   
-  async getTask(token: string, day?: number) {
+  async getTasks(token: string, day?: number) {
     const url = day !== undefined 
       ? `${API_URL}/day/${day}` 
       : `${API_URL}/week`;
