@@ -197,7 +197,7 @@ function LoginScreen({ onLogin }: { onLogin: (token: string, user: User) => void
 
 // Weekly View Component
 function WeeklyView({ token, onLogout }: { token: string; onLogout: () => void }) {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [task, setTasks] = useState<Task[]>([]);
   const [selectedDay, setSelectedDay] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showAddTask, setShowAddTask] = useState(false);
