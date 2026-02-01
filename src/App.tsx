@@ -418,6 +418,8 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
   const [startTime, setStartTime] = useState('08:00');
   const [endTime, setEndTime] = useState('09:00');
   const [loading, setLoading] = useState(false);
+  const [frequent, setLoading] = useState(false);
+  const [event_date, setLoading] = today();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -428,7 +430,9 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
         type,
         day_of_week: selectedDay,
         start_time: startTime,
-        end_time: endTime
+        end_time: endTime,
+        event_date: event_date,
+        frequent: frequent
       });
       await onAdded();
       onClose();
