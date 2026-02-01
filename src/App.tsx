@@ -70,7 +70,7 @@ const api = {
     return res.json();
   },
   
-  async createTask(token: string, task: Omit<Task, 'id' | 'is_done' || 'user_id' | 'icon'>) {
+  async createTask(token: string, task: Omit<Task, 'id' | 'is_done' | 'user_id' | 'icon'>) {
     const res = await fetch(`${API_URL}/tasks`, {
       method: 'POST',
       headers: { 
