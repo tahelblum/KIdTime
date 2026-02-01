@@ -6,6 +6,7 @@ const API_URL = 'https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE';
 // Types
 interface Task {
   id: number;
+  user_id: number;
   title: string;
   type: 'school' | 'hobby' | 'free' | 'test';
   day_of_week: number;
@@ -69,7 +70,7 @@ const api = {
     return res.json();
   },
   
-  async createTask(token: string, task: Omit<Task, 'id' | 'is_done' | 'icon'>) {
+  async createTask(token: string, task: Omit<Task, 'id' | 'is_done' || 'user_id' | 'icon'>) {
     const res = await fetch(`${API_URL}/tasks`, {
       method: 'POST',
       headers: { 
