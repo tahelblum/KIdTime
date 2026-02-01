@@ -13,6 +13,8 @@ interface Task {
   start_time: string;
   end_time: string;
   is_done: boolean;
+  frequent: boolean;
+  event_date: date;
   icon: string;
 }
 
@@ -419,7 +421,6 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
   const [endTime, setEndTime] = useState('09:00');
   const [loading, setLoading] = useState(false);
   const [frequent, setLoading] = useState(false);
-  const [event_date, setLoading] = today();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -428,7 +429,7 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
       await api.createTask(token, {
         title,
         type,
-        day_of_week: selectedDay,
+        day_of_week,
         start_time: startTime,
         end_time: endTime,
         event_date: event_date,
