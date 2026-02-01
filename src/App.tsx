@@ -68,18 +68,19 @@ const api = {
   },
   
 async toggleTask(token: string, id: number) {
-  // שימי לב לכתובת המדויקת: Toggle_task עם T גדולה וקו תחתון
+  // ודאי ש-API_URL שלך כולל את ה-wZUcfmuE
   const res = await fetch(`${API_URL}/Toggle_task`, {
-    method: 'POST', // ב-Xano פונקציות מותאמות אישית הן לרוב POST
+    method: 'POST', 
     headers: { 
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ task_id: id }) // ודאי שב-Xano לשדה הקלט קוראים task_id
+    // ודאי שב-Xano ה-Input נקרא task_id
+    body: JSON.stringify({ task_id: id }) 
   });
 
-  if (!res.ok) {
-    throw new Error('Failed to toggle task');
+  if (res.status === 404) {
+    console.error("Endpoint not found. Check if the URL is correct or if it should be /Toggle_task without the 'tasks' prefix");
   }
 
   return res.json();
