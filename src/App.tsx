@@ -16,7 +16,7 @@ interface Task {
 }
 
 interface User {
-  id: number;
+  user_id: number;
   name: string;
   email: string;
   role: 'parent' | 'child';
