@@ -67,14 +67,22 @@ const api = {
     return res.json();
   },
   
-  async toggleTask(token: string, id: number) {
-    const res = await fetch(`${API_URL}/task/${id}/toggle`, {
-      method: 'PATCH',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    return res.json();
-  },
-  
+sync toggleTask(token: string, id: number) {
+  const res = await fetch(`${API_URL}/Toggle_task`, {
+    method: 'POST', 
+    headers: { 
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ task_id: id })
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to toggle task');
+  }
+
+  return res.json();
+},
   async createTask(token: string, task: Omit<Task, 'id' | 'is_done' | 'user_id' | 'icon'>) {
     const res = await fetch(`${API_URL}/task`, {
       method: 'POST',
