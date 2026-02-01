@@ -408,7 +408,6 @@ function WeeklyView({ token, onLogout }: { token: string; onLogout: () => void }
   );
 }
 
-// Add Task Modal
 function AddTaskModal({ token, selectedDay, onClose, onAdded }: { 
   token: string; 
   selectedDay: number; 
@@ -421,20 +420,22 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
   const [endTime, setEndTime] = useState('09:00');
   const [loading, setLoading] = useState(false);
   const [frequent, setfrequent] = useState(false);
-  const [eventDate, setEventDate] = useState(''); // הוספת State לתאריך
+  const [eventDate, setEventDate] = useState('');
+  
+  // הוספת State לבחירת יום - מתחיל ביום שנבחר במסך הראשי
+  const [dayOfWeek, setDayOfWeek] = useState(selectedDay);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // כאן פתרנו את השגיאות: הגדרנו את day_of_week והשתמשנו ב-eventDate
       await api.createTask(token, {
         title,
         type,
-        day_of_week: selectedDay, // משתמשים ב-Prop שקיבלנו
+        day_of_week: dayOfWeek, // משתמש ביום שנבחר בתוך המודל
         start_time: startTime,
         end_time: endTime,
-        event_date: eventDate || undefined, // שימוש ב-State החדש
+        event_date: eventDate || undefined,
         frequent: frequent
       });
       await onAdded();
@@ -452,9 +453,25 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
         <h2 className="text-xl font-bold mb-4">הוספת משימה חדשה</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* בחירת יום בשבוע */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">באיזה יום?</label>
+            <select
+              value={dayOfWeek}
+              onChange={(e) => setDayOfWeek(Number(e.target.value))}
+              className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl bg-slate-50"
+            >
+              {days.map((dayName, index) => (
+                <option key={index} value={index}>
+                  יום {dayName}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <input
             type="text"
-            placeholder="שם המשימה"
+            placeholder="שם המשימה (למשל: אימון כדורגל)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
@@ -472,54 +489,64 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
             <option value="test">📝 מבחן</option>
           </select>
 
-          {/* הוספת בחירת תאריך */}
-          <input
-            type="date"
-            value={eventDate}
-            onChange={(e) => setEventDate(e.target.value)}
-            className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
-          />
-
-          {/* הוספת בחירת חזרתיות */}
-          <label className="flex items-center gap-2 px-2">
-            <input
-              type="checkbox"
-              checked={frequent}
-              onChange={(e) => setfrequent(e.target.checked)}
-              className="w-4 h-4"
-            />
-            <span className="text-slate-700">משימה קבועה (חזרתית)</span>
-          </label>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs text-slate-500 mb-1">תאריך (אופציונלי)</label>
+              <input
+                type="date"
+                value={eventDate}
+                onChange={(e) => setEventDate(e.target.value)}
+                className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
+              />
+            </div>
+            <div className="flex items-end pb-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={frequent}
+                  onChange={(e) => setfrequent(e.target.checked)}
+                  className="w-4 h-4 text-indigo-500"
+                />
+                <span className="text-sm text-slate-700">משימה קבועה</span>
+              </label>
+            </div>
+          </div>
           
           <div className="flex gap-2">
-            <input
-              type="time"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              className="flex-1 px-4 py-2 border-2 border-slate-200 rounded-xl"
-              required
-            />
-            <input
-              type="time"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-              className="flex-1 px-4 py-2 border-2 border-slate-200 rounded-xl"
-              required
-            />
+            <div className="flex-1">
+              <label className="block text-xs text-slate-500 mb-1">התחלה</label>
+              <input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
+                required
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-xs text-slate-500 mb-1">סיום</label>
+              <input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
+                required
+              />
+            </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 pt-2">
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-indigo-500 text-white py-2 rounded-xl font-bold hover:bg-indigo-600"
+              className="flex-1 bg-indigo-500 text-white py-3 rounded-xl font-bold hover:bg-indigo-600 shadow-md"
             >
-              {loading ? '...שומר' : 'הוסף'}
+              {loading ? 'שומר...' : 'הוסף משימה'}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-slate-200 text-slate-700 py-2 rounded-xl font-bold hover:bg-slate-300"
+              className="flex-1 bg-slate-200 text-slate-700 py-3 rounded-xl font-bold hover:bg-slate-300"
             >
               ביטול
             </button>
@@ -529,7 +556,6 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
     </div>
   );
 }
-
 // Main App
 export default function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('authToken'));
