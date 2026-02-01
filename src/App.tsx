@@ -33,7 +33,7 @@ const typeColors = {
 
 // API Functions
 const api = {
-  async login1(email: string, password: string) {
+  async login(email: string, password: string) {
     const res = await fetch(`${API_URL}/auth/login1`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -42,7 +42,7 @@ const api = {
     return res.json();
   },
   
-  async signup1(email: string, password: string, name: string) {
+  async signup(email: string, password: string, name: string) {
     const res = await fetch(`${API_URL}/auth/signup1`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
