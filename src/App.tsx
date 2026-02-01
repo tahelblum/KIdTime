@@ -420,7 +420,7 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
   const [startTime, setStartTime] = useState('08:00');
   const [endTime, setEndTime] = useState('09:00');
   const [loading, setLoading] = useState(false);
-  const [frequent, setLoading] = useState(false);
+  const [frequent, setfrequent] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
