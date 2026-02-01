@@ -421,18 +421,20 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
   const [endTime, setEndTime] = useState('09:00');
   const [loading, setLoading] = useState(false);
   const [frequent, setfrequent] = useState(false);
+  const [eventDate, setEventDate] = useState(''); // הוספת State לתאריך
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
+      // כאן פתרנו את השגיאות: הגדרנו את day_of_week והשתמשנו ב-eventDate
       await api.createTask(token, {
         title,
         type,
-        day_of_week,
+        day_of_week: selectedDay, // משתמשים ב-Prop שקיבלנו
         start_time: startTime,
         end_time: endTime,
-        event_date: event_date,
+        event_date: eventDate || undefined, // שימוש ב-State החדש
         frequent: frequent
       });
       await onAdded();
@@ -469,6 +471,25 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
             <option value="free">🎮 זמן חופשי</option>
             <option value="test">📝 מבחן</option>
           </select>
+
+          {/* הוספת בחירת תאריך */}
+          <input
+            type="date"
+            value={eventDate}
+            onChange={(e) => setEventDate(e.target.value)}
+            className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
+          />
+
+          {/* הוספת בחירת חזרתיות */}
+          <label className="flex items-center gap-2 px-2">
+            <input
+              type="checkbox"
+              checked={frequent}
+              onChange={(e) => setfrequent(e.target.checked)}
+              className="w-4 h-4"
+            />
+            <span className="text-slate-700">משימה קבועה (חזרתית)</span>
+          </label>
           
           <div className="flex gap-2">
             <input
