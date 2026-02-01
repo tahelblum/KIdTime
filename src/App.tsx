@@ -209,17 +209,19 @@ function WeeklyView({ token, onLogout }: { token: string; onLogout: () => void }
     loadTasks();
   }, []);
 
-  const loadTasks = async () => {
-    try {
-      const data = await api.getTasks(token);
-      setTasks(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error('Error loading tasks:', err);
-      setTasks([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+const loadTasks = async () => {
+  try {
+    const data = await api.getTasks(token);
+    // התיקון הקריטי: אנחנו צריכים את data.task
+    const tasksArray = data && data.task ? data.task : [];
+    setTasks(tasksArray);
+  } catch (err) {
+    console.error('Error loading tasks:', err);
+    setTasks([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const toggleTask = async (id: number) => {
     try {
