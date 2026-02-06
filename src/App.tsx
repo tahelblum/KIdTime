@@ -1,14 +1,210 @@
-// src/App.tsx - TimeKids Full Application
+typescript// src/App.tsx - TimeKids Full Application v2.0
 import React, { useState, useEffect } from 'react';
 
 const API_URL = 'https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE';
 
-// Types
+// ============================================
+// TRANSLATIONS
+// ============================================
+const translations = {
+  he: {
+    dir: 'rtl',
+    app: {
+      title: 'TimeKids',
+      logout: 'יציאה',
+      loading: 'טוען...',
+      settings: 'הגדרות',
+      back: 'חזרה'
+    },
+    login: {
+      title: 'כניסה לחשבון',
+      signup: 'יצירת חשבון חדש',
+      email: 'אימייל',
+      password: 'סיסמה',
+      name: 'שם מלא',
+      loginBtn: 'כניסה',
+      signupBtn: 'הרשמה',
+      switchToSignup: 'אין לי חשבון - הרשמה',
+      switchToLogin: 'כבר יש לי חשבון - כניסה',
+      chooseLanguage: 'בחר שפה',
+      error: 'שגיאה בהתחברות',
+      addChildren: 'הוסף ילדים',
+      childName: 'שם הילד/ה',
+      childGrade: 'כיתה',
+      childSchool: 'בית ספר',
+      addChild: 'הוסף ילד',
+      removeChild: 'הסר',
+      continueRegistration: 'המשך להרשמה'
+    },
+    selectChild: {
+      title: 'בחר ילד',
+      addNewChild: 'הוסף ילד חדש',
+      manageChildren: 'ניהול ילדים'
+    },
+    days: ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'],
+    tasks: {
+      school: 'לימודים',
+      hobby: 'חוגים',
+      free: 'חופשי',
+      test: 'מבחן',
+      study: 'לימוד למבחן',
+      nextTask: 'עכשיו צריך:',
+      allDone: 'סיימת הכל! 🎉',
+      noTasks: 'אין משימות ליום זה',
+      addTask: '+ הוספת משימה',
+      myProgress: 'ההתקדמות שלי היום',
+      congrats: '🌟 כל הכבוד! סיימת את כל המשימות! 🌟'
+    },
+    addTask: {
+      title: 'הוספת משימה חדשה',
+      whichDay: 'באיזה יום?',
+      taskName: 'שם המשימה',
+      taskNamePlaceholder: 'למשל: אימון כדורגל',
+      date: 'תאריך',
+      dateOptional: 'תאריך (אופציונלי)',
+      recurring: 'משימה קבועה',
+      startTime: 'התחלה',
+      endTime: 'סיום',
+      saveBtn: 'הוסף משימה',
+      saving: 'שומר...',
+      cancel: 'ביטול'
+    },
+    schedule: {
+      uploadTitle: 'העלאת מערכת שעות',
+      uploadBtn: 'העלה קובץ CSV/Excel',
+      uploadInstructions: 'העלה מערכת שעות שנתית בפורמט CSV או Excel',
+      uploading: 'מעלה...',
+      success: 'מערכת השעות הועלתה בהצלחה!'
+    },
+    tests: {
+      addTest: 'הוסף מבחן',
+      testTitle: 'הוספת מבחן חדש',
+      subject: 'נושא המבחן',
+      subjectPlaceholder: 'למשל: מתמטיקה',
+      testDate: 'תאריך המבחן',
+      testTime: 'שעת המבחן',
+      duration: 'משך (דקות)',
+      studyDays: 'כמה ימי לימוד?',
+      createStudyPlan: 'צור תכנית לימוד',
+      studyPlanCreated: 'נוצרה תכנית לימוד אוטומטית!',
+      topics: 'נושאים ללימוד',
+      topicsPlaceholder: 'כל נושא בשורה נפרדת',
+      materials: 'חומרי לימוד'
+    },
+    settings: {
+      title: 'הגדרות',
+      language: 'שפה',
+      changeLanguage: 'שנה שפה',
+      hebrew: 'עברית',
+      english: 'English',
+      profile: 'פרופיל',
+      children: 'ילדים'
+    }
+  },
+  en: {
+    dir: 'ltr',
+    app: {
+      title: 'TimeKids',
+      logout: 'Logout',
+      loading: 'Loading...',
+      settings: 'Settings',
+      back: 'Back'
+    },
+    login: {
+      title: 'Login',
+      signup: 'Create New Account',
+      email: 'Email',
+      password: 'Password',
+      name: 'Full Name',
+      loginBtn: 'Login',
+      signupBtn: 'Sign Up',
+      switchToSignup: "Don't have an account? Sign up",
+      switchToLogin: 'Already have an account? Login',
+      chooseLanguage: 'Choose Language',
+      error: 'Login error',
+      addChildren: 'Add Children',
+      childName: "Child's Name",
+      childGrade: 'Grade',
+      childSchool: 'School',
+      addChild: 'Add Child',
+      removeChild: 'Remove',
+      continueRegistration: 'Continue Registration'
+    },
+    selectChild: {
+      title: 'Select Child',
+      addNewChild: 'Add New Child',
+      manageChildren: 'Manage Children'
+    },
+    days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    tasks: {
+      school: 'School',
+      hobby: 'Hobby',
+      free: 'Free Time',
+      test: 'Test',
+      study: 'Study Session',
+      nextTask: 'Next up:',
+      allDone: 'All done! 🎉',
+      noTasks: 'No tasks for this day',
+      addTask: '+ Add Task',
+      myProgress: 'My Progress Today',
+      congrats: '🌟 Awesome! You completed all tasks! 🌟'
+    },
+    addTask: {
+      title: 'Add New Task',
+      whichDay: 'Which day?',
+      taskName: 'Task Name',
+      taskNamePlaceholder: 'e.g., Soccer practice',
+      date: 'Date',
+      dateOptional: 'Date (optional)',
+      recurring: 'Recurring task',
+      startTime: 'Start Time',
+      endTime: 'End Time',
+      saveBtn: 'Add Task',
+      saving: 'Saving...',
+      cancel: 'Cancel'
+    },
+    schedule: {
+      uploadTitle: 'Upload Schedule',
+      uploadBtn: 'Upload CSV/Excel File',
+      uploadInstructions: 'Upload annual schedule in CSV or Excel format',
+      uploading: 'Uploading...',
+      success: 'Schedule uploaded successfully!'
+    },
+    tests: {
+      addTest: 'Add Test',
+      testTitle: 'Add New Test',
+      subject: 'Subject',
+      subjectPlaceholder: 'e.g., Mathematics',
+      testDate: 'Test Date',
+      testTime: 'Test Time',
+      duration: 'Duration (minutes)',
+      studyDays: 'Study days needed',
+      createStudyPlan: 'Create Study Plan',
+      studyPlanCreated: 'Study plan created automatically!',
+      topics: 'Topics to Study',
+      topicsPlaceholder: 'One topic per line',
+      materials: 'Study Materials'
+    },
+    settings: {
+      title: 'Settings',
+      language: 'Language',
+      changeLanguage: 'Change Language',
+      hebrew: 'עברית',
+      english: 'English',
+      profile: 'Profile',
+      children: 'Children'
+    }
+  }
+};
+
+// ============================================
+// TYPES
+// ============================================
 interface Task {
   id: number;
-  user_id: number;
+  child_id: number;
   title: string;
-  type: 'school' | 'hobby' | 'free' | 'test';
+  type: 'school' | 'hobby' | 'free' | 'test' | 'study';
   day_of_week: number;
   start_time: string;
   end_time: string;
@@ -16,6 +212,8 @@ interface Task {
   frequent: boolean;
   event_date?: string;
   icon: string;
+  is_overridden?: boolean;
+  original_task_id?: number;
 }
 
 interface User {
@@ -23,21 +221,53 @@ interface User {
   name: string;
   email: string;
   role: 'parent' | 'child';
+  language: 'he' | 'en';
+  parent_id?: number;
 }
 
-const days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+interface Child {
+  child_id: number;
+  parent_user_id: number;
+  name: string;
+  grade: string;
+  school_name: string;
+  language: 'he' | 'en';
+}
 
-const typeColors = {
-  school: { bg: 'bg-blue-100', border: 'border-blue-300', icon: '📚', barColor: 'bg-blue-400' },
-  hobby: { bg: 'bg-green-100', border: 'border-green-300', icon: '⭐', barColor: 'bg-green-400' },
-  free: { bg: 'bg-amber-50', border: 'border-amber-200', icon: '🎮', barColor: 'bg-amber-400' },
-  test : { bg: 'bg-pink-50', border: 'border-pink-200', icon: '📝', barColor: 'bg-pink-400' },
-  'לימודים': { bg: 'bg-blue-100', border: 'border-blue-300', icon: '📚', barColor: 'bg-blue-400' },
-  'מבחן': { bg: 'bg-pink-50', border: 'border-pink-200', icon: '📝', barColor: 'bg-pink-400' },
-  'כדורגל': { bg: 'bg-green-100', border: 'border-green-300', icon: '⚽', barColor: 'bg-green-400' },
-};
+interface Test {
+  test_id: number;
+  child_id: number;
+  subject: string;
+  test_date: string;
+  test_time: string;
+  duration_minutes: number;
+  study_days: number;
+  topics?: string[];
+}
 
-// API Functions
+interface StudySession {
+  session_id: number;
+  test_id: number;
+  child_id: number;
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+  topics: string[];
+  is_completed: boolean;
+  materials: StudyMaterial[];
+}
+
+interface StudyMaterial {
+  material_id: number;
+  session_id: number;
+  title: string;
+  type: 'link' | 'file' | 'note';
+  content: string;
+}
+
+// ============================================
+// API FUNCTIONS (עדכון לתמיכה במבנה החדש)
+// ============================================
 const api = {
   async login(email: string, password: string) {
     const res = await fetch(`${API_URL}/auth/login1`, {
@@ -48,46 +278,58 @@ const api = {
     return res.json();
   },
   
-  async signup(email: string, password: string, name: string) {
+  async signup(email: string, password: string, name: string, language: 'he' | 'en', children: Partial<Child>[]) {
     const res = await fetch(`${API_URL}/auth/signup1`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, name })
+      body: JSON.stringify({ email, password, name, language, children })
+    });
+    return res.json();
+  },
+
+  async getChildren(token: string) {
+    const res = await fetch(`${API_URL}/children`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return res.json();
+  },
+
+  async addChild(token: string, child: Partial<Child>) {
+    const res = await fetch(`${API_URL}/children`, {
+      method: 'POST',
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(child)
     });
     return res.json();
   },
   
-  async getTasks(token: string, day?: number) {
+  async getTasks(token: string, childId: number, day?: number) {
     const url = day !== undefined 
-      ? `${API_URL}/day/${day}` 
-      : `${API_URL}/week`;
+      ? `${API_URL}/child/${childId}/day/${day}` 
+      : `${API_URL}/child/${childId}/week`;
     const res = await fetch(url, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     return res.json();
   },
   
-async toggleTask(token: string, id: number) {
-  // ודאי ש-API_URL שלך כולל את ה-wZUcfmuE
-  const res = await fetch(`${API_URL}/Toggle_task`, {
-    method: 'POST', 
-    headers: { 
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    // ודאי שב-Xano ה-Input נקרא task_id
-    body: JSON.stringify({ task_id: id }) 
-  });
-
-  if (res.status === 404) {
-    console.error("Endpoint not found. Check if the URL is correct or if it should be /Toggle_task without the 'tasks' prefix");
-  }
-
-  return res.json();
-},
+  async toggleTask(token: string, id: number) {
+    const res = await fetch(`${API_URL}/Toggle_task`, {
+      method: 'POST', 
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ task_id: id }) 
+    });
+    return res.json();
+  },
   
-  async createTask(token: string, task: Omit<Task, 'id' | 'is_done' | 'user_id' | 'icon'>) {
-    const res = await fetch(`${API_URL}/task`, {
+  async createTask(token: string, childId: number, task: Omit<Task, 'id' | 'is_done' | 'child_id' | 'icon'>) {
+    const res = await fetch(`${API_URL}/child/${childId}/task`, {
       method: 'POST',
       headers: { 
         'Authorization': `Bearer ${token}`,
@@ -96,10 +338,56 @@ async toggleTask(token: string, id: number) {
       body: JSON.stringify(task)
     });
     return res.json();
+  },
+
+  async uploadSchedule(token: string, childId: number, file: File) {
+    const formData = new FormData();
+    formData.append('schedule', file);
+    formData.append('child_id', childId.toString());
+    
+    const res = await fetch(`${API_URL}/upload_schedule`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData
+    });
+    return res.json();
+  },
+
+  async createTest(token: string, test: Partial<Test>) {
+    const res = await fetch(`${API_URL}/tests`, {
+      method: 'POST',
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(test)
+    });
+    return res.json();
+  },
+
+  async getTests(token: string, childId: number) {
+    const res = await fetch(`${API_URL}/child/${childId}/tests`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return res.json();
+  },
+
+  async updateUserLanguage(token: string, language: 'he' | 'en') {
+    const res = await fetch(`${API_URL}/user/language`, {
+      method: 'PUT',
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ language })
+    });
+    return res.json();
   }
 };
 
-// Helper functions
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
 const timeToMinutes = (time: string) => {
   const [h, m] = time.split(':').map(Number);
   return h * 60 + m;
@@ -114,7 +402,20 @@ const formatDuration = (start: string, end: string) => {
   return `${hours}:${mins.toString().padStart(2, '0')}`;
 };
 
-// Login Component
+const getTypeColors = (type: string) => {
+  const colors: Record<string, any> = {
+    school: { bg: 'bg-blue-100', border: 'border-blue-300', icon: '📚', barColor: 'bg-blue-400' },
+    hobby: { bg: 'bg-green-100', border: 'border-green-300', icon: '⭐', barColor: 'bg-green-400' },
+    free: { bg: 'bg-amber-50', border: 'border-amber-200', icon: '🎮', barColor: 'bg-amber-400' },
+    test: { bg: 'bg-pink-50', border: 'border-pink-200', icon: '📝', barColor: 'bg-pink-400' },
+    study: { bg: 'bg-purple-50', border: 'border-purple-200', icon: '📖', barColor: 'bg-purple-400' }
+  };
+  return colors[type] || colors.school;
+};
+
+// ============================================
+// LOGIN COMPONENT WITH LANGUAGE SELECTION
+// ============================================
 function LoginScreen({ onLogin }: { onLogin: (token: string, user: User) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -122,44 +423,174 @@ function LoginScreen({ onLogin }: { onLogin: (token: string, user: User) => void
   const [isSignup, setIsSignup] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [language, setLanguage] = useState<'he' | 'en'>('he');
+  const [children, setChildren] = useState<Partial<Child>[]>([]);
+  const [showChildrenForm, setShowChildrenForm] = useState(false);
+
+  const t = translations[language];
+
+  const addChild = () => {
+    setChildren([...children, { name: '', grade: '', school_name: '', language }]);
+  };
+
+  const removeChild = (index: number) => {
+    setChildren(children.filter((_, i) => i !== index));
+  };
+
+  const updateChild = (index: number, field: keyof Child, value: string) => {
+    const updated = [...children];
+    updated[index] = { ...updated[index], [field]: value };
+    setChildren(updated);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (isSignup && !showChildrenForm) {
+      setShowChildrenForm(true);
+      return;
+    }
+
     setError('');
     setLoading(true);
 
     try {
       const data = isSignup 
-        ? await api.signup(email, password, name)
+        ? await api.signup(email, password, name, language, children)
         : await api.login(email, password);
       
       if (data.authToken) {
-        onLogin(data.authToken, data);
+        onLogin(data.authToken, { ...data, language });
       } else {
-        setError('שגיאה בהתחברות');
+        setError(t.login.error);
       }
     } catch (err) {
-      setError('שגיאה בהתחברות. נסי שוב.');
+      setError(t.login.error);
     } finally {
       setLoading(false);
     }
   };
 
+  if (showChildrenForm) {
+    return (
+      <div dir={t.dir} className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl p-8 shadow-2xl w-full max-w-2xl">
+          <h2 className="text-2xl font-bold text-center mb-6 text-slate-800">
+            {t.login.addChildren}
+          </h2>
+
+          <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
+            {children.map((child, index) => (
+              <div key={index} className="border-2 border-slate-200 rounded-xl p-4">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="font-bold text-slate-700">#{index + 1}</span>
+                  <button
+                    onClick={() => removeChild(index)}
+                    className="text-red-500 text-sm hover:text-red-700"
+                  >
+                    {t.login.removeChild}
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="text"
+                    placeholder={t.login.childName}
+                    value={child.name || ''}
+                    onChange={(e) => updateChild(index, 'name', e.target.value)}
+                    className="px-3 py-2 border-2 border-slate-200 rounded-lg text-sm"
+                  />
+                  <input
+                    type="text"
+                    placeholder={t.login.childGrade}
+                    value={child.grade || ''}
+                    onChange={(e) => updateChild(index, 'grade', e.target.value)}
+                    className="px-3 py-2 border-2 border-slate-200 rounded-lg text-sm"
+                  />
+                  <input
+                    type="text"
+                    placeholder={t.login.childSchool}
+                    value={child.school_name || ''}
+                    onChange={(e) => updateChild(index, 'school_name', e.target.value)}
+                    className="col-span-2 px-3 py-2 border-2 border-slate-200 rounded-lg text-sm"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={addChild}
+            className="w-full mb-4 py-3 border-2 border-indigo-300 border-dashed rounded-xl text-indigo-500 font-bold hover:bg-indigo-50"
+          >
+            + {t.login.addChild}
+          </button>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowChildrenForm(false)}
+              className="flex-1 bg-slate-200 text-slate-700 py-3 rounded-xl font-bold"
+            >
+              {t.app.back}
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={loading || children.length === 0}
+              className="flex-1 bg-indigo-500 text-white py-3 rounded-xl font-bold hover:bg-indigo-600 disabled:opacity-50"
+            >
+              {loading ? t.app.loading : t.login.continueRegistration}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div dir="rtl" className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4">
+    <div dir={t.dir} className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl p-8 shadow-2xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-center mb-2 text-slate-800">
-          TimeKids
+          {t.app.title}
         </h1>
-        <p className="text-center text-slate-500 mb-8">
-          {isSignup ? 'יצירת חשבון חדש' : 'כניסה לחשבון'}
+        <p className="text-center text-slate-500 mb-6">
+          {isSignup ? t.login.signup : t.login.title}
         </p>
+
+        {/* Language Selector */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            {t.login.chooseLanguage}
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setLanguage('he')}
+              className={`py-3 rounded-xl font-bold transition-all ${
+                language === 'he'
+                  ? 'bg-indigo-500 text-white shadow-lg'
+                  : 'bg-slate-100 text-slate-600'
+              }`}
+            >
+              🇮🇱 עברית
+            </button>
+            <button
+              type="button"
+              onClick={() => setLanguage('en')}
+              className={`py-3 rounded-xl font-bold transition-all ${
+                language === 'en'
+                  ? 'bg-indigo-500 text-white shadow-lg'
+                  : 'bg-slate-100 text-slate-600'
+              }`}
+            >
+              🇺🇸 English
+            </button>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {isSignup && (
             <input
               type="text"
-              placeholder="שם מלא"
+              placeholder={t.login.name}
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-500 outline-none"
@@ -169,7 +600,7 @@ function LoginScreen({ onLogin }: { onLogin: (token: string, user: User) => void
           
           <input
             type="email"
-            placeholder="אימייל"
+            placeholder={t.login.email}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-500 outline-none"
@@ -178,7 +609,7 @@ function LoginScreen({ onLogin }: { onLogin: (token: string, user: User) => void
           
           <input
             type="password"
-            placeholder="סיסמה"
+            placeholder={t.login.password}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-500 outline-none"
@@ -194,7 +625,7 @@ function LoginScreen({ onLogin }: { onLogin: (token: string, user: User) => void
             disabled={loading}
             className="w-full bg-indigo-500 text-white py-3 rounded-xl font-bold hover:bg-indigo-600 transition-all disabled:opacity-50"
           >
-            {loading ? '...טוען' : isSignup ? 'הרשמה' : 'כניסה'}
+            {loading ? t.app.loading : isSignup ? t.login.signupBtn : t.login.loginBtn}
           </button>
         </form>
 
@@ -202,262 +633,152 @@ function LoginScreen({ onLogin }: { onLogin: (token: string, user: User) => void
           onClick={() => setIsSignup(!isSignup)}
           className="w-full mt-4 text-indigo-500 text-sm"
         >
-          {isSignup ? 'כבר יש לי חשבון - כניסה' : 'אין לי חשבון - הרשמה'}
+          {isSignup ? t.login.switchToLogin : t.login.switchToSignup}
         </button>
       </div>
     </div>
   );
 }
 
-// Weekly View Component
-function WeeklyView({ token, onLogout }: { token: string; onLogout: () => void }) {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [selectedDay, setSelectedDay] = useState(0);
+// ============================================
+// CHILD SELECTOR COMPONENT
+// ============================================
+function ChildSelector({ 
+  token, 
+  user,
+  onSelectChild, 
+  onLogout 
+}: { 
+  token: string;
+  user: User;
+  onSelectChild: (child: Child) => void;
+  onLogout: () => void;
+}) {
+  const [children, setChildren] = useState<Child[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddTask, setShowAddTask] = useState(false);
+  const [showAddChild, setShowAddChild] = useState(false);
+
+  const t = translations[user.language];
 
   useEffect(() => {
-    loadTasks();
+    loadChildren();
   }, []);
 
-const loadTasks = async () => {
-  try {
-    const data = await api.getTasks(token);
-    // התיקון הקריטי: אנחנו צריכים את data.task
-    const tasksArray = data && data.task ? data.task : [];
-    setTasks(tasksArray);
-  } catch (err) {
-    console.error('Error loading tasks:', err);
-    setTasks([]);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const toggleTask = async (id: number) => {
+  const loadChildren = async () => {
     try {
-      await api.toggleTask(token, id);
-      await loadTasks();
+      const data = await api.getChildren(token);
+      setChildren(data.children || []);
     } catch (err) {
-      console.error('Error toggling task:', err);
+      console.error('Error loading children:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getDayTasks = (day: number) => 
-    tasks.filter(t => t.day_of_week === day).sort((a, b) => a.start_time.localeCompare(b.start_time));
-
-  const getDayProgress = (day: number) => {
-    const dayTasks = getDayTasks(day);
-    if (dayTasks.length === 0) return 0;
-    const done = dayTasks.filter(t => t.is_done).length;
-    return (done / dayTasks.length) * 100;
-  };
-
-  const getNextTask = () => {
-    const todayTasks = getDayTasks(selectedDay);
-    const next = todayTasks.find(t => !t.is_done);
-    return next ? `${next.title} ב-${next.start_time}` : 'סיימת הכל! 🎉';
-  };
-
-  const dayStart = 7 * 60;
-  const dayEnd = 21 * 60;
-  const daySpan = dayEnd - dayStart;
-
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">טוען...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        {t.app.loading}
+      </div>
+    );
   }
 
   return (
-    <div dir="rtl" className="min-h-screen bg-slate-50 p-4 font-sans">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-slate-800">TimeKids</h1>
-        <button onClick={onLogout} className="text-sm text-slate-500 hover:text-slate-700">
-          יציאה
-        </button>
-      </div>
-
-      {/* Next Task Banner */}
-      <div className="mb-5 bg-gradient-to-l from-purple-500 to-indigo-500 rounded-2xl p-4 shadow-lg">
-        <p className="text-purple-100 text-sm mb-1">עכשיו צריך:</p>
-        <p className="text-white text-2xl font-bold">{getNextTask()}</p>
-      </div>
-
-      {/* Week Days */}
-      <div className="flex gap-2 mb-5 overflow-x-auto pb-2">
-        {days.map((day, idx) => (
+    <div dir={t.dir} className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 p-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-white">{t.app.title}</h1>
           <button
-            key={day}
-            onClick={() => setSelectedDay(idx)}
-            className={`flex-shrink-0 w-16 rounded-xl p-3 transition-all duration-300 ${
-              selectedDay === idx 
-                ? 'bg-indigo-500 text-white shadow-lg scale-105' 
-                : 'bg-white text-slate-600'
-            }`}
+            onClick={onLogout}
+            className="text-white/80 hover:text-white text-sm"
           >
-            <p className="text-xs opacity-70">יום</p>
-            <p className="font-bold text-sm">{day}</p>
-            <div className="mt-2 h-1.5 bg-slate-200 rounded-full overflow-hidden">
-              <div 
-                className={`h-full rounded-full transition-all duration-500 ${
-                  selectedDay === idx ? 'bg-white' : 'bg-indigo-400'
-                }`}
-                style={{ width: `${getDayProgress(idx)}%` }}
-              />
-            </div>
+            {t.app.logout}
           </button>
-        ))}
-      </div>
-
-      {/* Timeline */}
-      <div className="bg-white rounded-2xl p-4 shadow-md mb-4">
-        <div className="flex justify-between text-xs text-slate-400 mb-2 px-1">
-          <span>07:00</span>
-          <span>10:00</span>
-          <span>13:00</span>
-          <span>16:00</span>
-          <span>19:00</span>
         </div>
-        
-        <div className="relative h-3 bg-slate-100 rounded-full mb-4">
-          {getDayTasks(selectedDay).map((task, idx) => {
-            const startPos = ((timeToMinutes(task.start_time) - dayStart) / daySpan) * 100;
-            const width = ((timeToMinutes(task.end_time) - timeToMinutes(task.start_time)) / daySpan) * 100;
-            const colors = typeColors[task.type];
-            return (
-              <div
-                key={idx}
-                className={`absolute h-full rounded-full transition-all duration-300 ${colors.barColor} ${task.is_done ? 'opacity-40' : ''}`}
-                style={{ right: `${startPos}%`, width: `${width}%` }}
-              />
-            );
-          })}
-        </div>
-      </div>
 
-      {/* Task Cards */}
-      <div className="space-y-3 mb-4">
-        {getDayTasks(selectedDay).map((task) => {
-          const colors = typeColors[task.type];
-          const duration = formatDuration(task.start_time, task.end_time);
-          
-          return (
+        <div className="bg-white rounded-3xl p-8 shadow-2xl">
+          <h2 className="text-2xl font-bold text-center mb-8 text-slate-800">
+            {t.selectChild.title}
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {children.map((child) => (
+              <button
+                key={child.child_id}
+                onClick={() => onSelectChild(child)}
+                className="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-2xl p-6 hover:shadow-lg hover:scale-105 transition-all"
+              >
+                <div className="text-5xl mb-3">👦</div>
+                <h3 className="text-xl font-bold text-slate-800 mb-1">
+                  {child.name}
+                </h3>
+                <p className="text-sm text-slate-500">
+                  {child.grade} • {child.school_name}
+                </p>
+              </button>
+            ))}
+
             <button
-              key={task.id}
-              onClick={() => toggleTask(task.id)}
-              className={`w-full text-right rounded-2xl p-4 border-2 transition-all duration-300 ${
-                colors.bg
-              } ${colors.border} ${
-                task.is_done ? 'opacity-50' : 'shadow-md hover:shadow-lg'
-              }`}
+              onClick={() => setShowAddChild(true)}
+              className="border-2 border-dashed border-indigo-300 rounded-2xl p-6 hover:bg-indigo-50 transition-all"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{colors.icon}</span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-500 text-sm font-medium">
-                        {task.start_time} - {task.end_time}
-                      </span>
-                      <span className="text-xs text-slate-400 bg-white/60 px-2 py-0.5 rounded-full">
-                        {duration}
-                      </span>
-                    </div>
-                    <p className={`text-lg font-bold text-slate-700 ${task.is_done ? 'line-through' : ''}`}>
-                      {task.title}
-                    </p>
-                  </div>
-                </div>
-                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${
-                  task.is_done 
-                    ? 'bg-green-500 border-green-500 text-white' 
-                    : 'border-slate-300 bg-white'
-                }`}>
-                  {task.is_done && <span>✓</span>}
-                </div>
-              </div>
+              <div className="text-5xl mb-3">➕</div>
+              <h3 className="text-xl font-bold text-indigo-500">
+                {t.selectChild.addNewChild}
+              </h3>
             </button>
-          );
-        })}
-        
-        {getDayTasks(selectedDay).length === 0 && (
-          <p className="text-center text-slate-400 py-8">אין משימות ליום זה</p>
-        )}
-      </div>
-
-      {/* Add Task Button */}
-      <button
-        onClick={() => setShowAddTask(true)}
-        className="w-full bg-indigo-500 text-white py-3 rounded-xl font-bold hover:bg-indigo-600 transition-all mb-4"
-      >
-        + הוספת משימה
-      </button>
-
-      {/* Progress */}
-      <div className="bg-white rounded-2xl p-4 shadow-md">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-slate-600">ההתקדמות שלי היום</span>
-          <span className="text-indigo-600 font-bold">{Math.round(getDayProgress(selectedDay))}%</span>
+          </div>
         </div>
-        <div className="h-4 bg-slate-100 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-gradient-to-l from-green-400 to-emerald-500 rounded-full transition-all duration-700"
-            style={{ width: `${getDayProgress(selectedDay)}%` }}
-          />
-        </div>
-        {getDayProgress(selectedDay) === 100 && getDayTasks(selectedDay).length > 0 && (
-          <p className="text-center mt-3 text-lg">🌟 כל הכבוד! סיימת את כל המשימות! 🌟</p>
-        )}
       </div>
 
-      {/* Legend */}
-      <div className="mt-4 flex justify-center gap-4 text-sm text-slate-500">
-        <span>📚 לימודים</span>
-        <span>⭐ חוגים</span>
-        <span>🎮 חופשי</span>
-        <span>📝 מבחן</span>
-      </div>
-
-      {/* Add Task Modal */}
-      {showAddTask && <AddTaskModal token={token} selectedDay={selectedDay} onClose={() => setShowAddTask(false)} onAdded={loadTasks} />}
+      {showAddChild && (
+        <AddChildModal
+          token={token}
+          language={user.language}
+          onClose={() => setShowAddChild(false)}
+          onAdded={loadChildren}
+        />
+      )}
     </div>
   );
 }
 
-function AddTaskModal({ token, selectedDay, onClose, onAdded }: { 
-  token: string; 
-  selectedDay: number; 
+// ============================================
+// ADD CHILD MODAL
+// ============================================
+function AddChildModal({
+  token,
+  language,
+  onClose,
+  onAdded
+}: {
+  token: string;
+  language: 'he' | 'en';
   onClose: () => void;
   onAdded: () => void;
 }) {
-  const [title, setTitle] = useState('');
-  const [type, setType] = useState<'school' | 'hobby' | 'free'| 'test'>('school');
-  const [startTime, setStartTime] = useState('08:00');
-  const [endTime, setEndTime] = useState('09:00');
+  const [name, setName] = useState('');
+  const [grade, setGrade] = useState('');
+  const [schoolName, setSchoolName] = useState('');
+  const [childLanguage, setChildLanguage] = useState<'he' | 'en'>(language);
   const [loading, setLoading] = useState(false);
-  const [frequent, setfrequent] = useState(false);
-  const [eventDate, setEventDate] = useState('');
-  
-  // הוספת State לבחירת יום - מתחיל ביום שנבחר במסך הראשי
-  const [dayOfWeek, setDayOfWeek] = useState(selectedDay);
+
+  const t = translations[language];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.createTask(token, {
-        title,
-        type,
-        day_of_week: dayOfWeek, // משתמש ביום שנבחר בתוך המודל
-        start_time: startTime,
-        end_time: endTime,
-        event_date: eventDate || undefined,
-        frequent: frequent
+      await api.addChild(token, {
+        name,
+        grade,
+        school_name: schoolName,
+        language: childLanguage
       });
       await onAdded();
       onClose();
     } catch (err) {
-      alert('שגיאה ביצירת משימה');
+      alert('Error adding child');
     } finally {
       setLoading(false);
     }
@@ -465,89 +786,64 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={onClose}>
-      <div dir="rtl" className="bg-white rounded-2xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-        <h2 className="text-xl font-bold mb-4">הוספת משימה חדשה</h2>
+      <div dir={t.dir} className="bg-white rounded-2xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+        <h2 className="text-xl font-bold mb-4">{t.selectChild.addNewChild}</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* בחירת יום בשבוע */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">באיזה יום?</label>
-            <select
-              value={dayOfWeek}
-              onChange={(e) => setDayOfWeek(Number(e.target.value))}
-              className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl bg-slate-50"
-            >
-              {days.map((dayName, index) => (
-                <option key={index} value={index}>
-                  יום {dayName}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <input
             type="text"
-            placeholder="שם המשימה (למשל: אימון כדורגל)"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            placeholder={t.login.childName}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
             required
           />
           
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value as any)}
+          <input
+            type="text"
+            placeholder={t.login.childGrade}
+            value={grade}
+            onChange={(e) => setGrade(e.target.value)}
             className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
-          >
-            <option value="school">📚 לימודים</option>
-            <option value="hobby">⭐ חוג</option>
-            <option value="free">🎮 זמן חופשי</option>
-            <option value="test">📝 מבחן</option>
-          </select>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs text-slate-500 mb-1">תאריך (אופציונלי)</label>
-              <input
-                type="date"
-                value={eventDate}
-                onChange={(e) => setEventDate(e.target.value)}
-                className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
-              />
-            </div>
-            <div className="flex items-end pb-3">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={frequent}
-                  onChange={(e) => setfrequent(e.target.checked)}
-                  className="w-4 h-4 text-indigo-500"
-                />
-                <span className="text-sm text-slate-700">משימה קבועה</span>
-              </label>
-            </div>
-          </div>
+            required
+          />
           
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <label className="block text-xs text-slate-500 mb-1">התחלה</label>
-              <input
-                type="time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-                className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
-                required
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-xs text-slate-500 mb-1">סיום</label>
-              <input
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-                className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
-                required
-              />
+          <input
+            type="text"
+            placeholder={t.login.childSchool}
+            value={schoolName}
+            onChange={(e) => setSchoolName(e.target.value)}
+            className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
+            required
+          />
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              {t.login.chooseLanguage}
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setChildLanguage('he')}
+                className={`py-2 rounded-lg ${
+                  childLanguage === 'he'
+                    ? 'bg-indigo-500 text-white'
+                    : 'bg-slate-100 text-slate-600'
+                }`}
+              >
+                עברית
+              </button>
+              <button
+                type="button"
+                onClick={() => setChildLanguage('en')}
+                className={`py-2 rounded-lg ${
+                  childLanguage === 'en'
+                    ? 'bg-indigo-500 text-white'
+                    : 'bg-slate-100 text-slate-600'
+                }`}
+              >
+                English
+              </button>
             </div>
           </div>
 
@@ -555,43 +851,20 @@ function AddTaskModal({ token, selectedDay, onClose, onAdded }: {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-indigo-500 text-white py-3 rounded-xl font-bold hover:bg-indigo-600 shadow-md"
+              className="flex-1 bg-indigo-500 text-white py-3 rounded-xl font-bold"
             >
-              {loading ? 'שומר...' : 'הוסף משימה'}
+              {loading ? t.app.loading : t.login.addChild}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-slate-200 text-slate-700 py-3 rounded-xl font-bold hover:bg-slate-300"
+              className="flex-1 bg-slate-200 text-slate-700 py-3 rounded-xl font-bold"
             >
-              ביטול
+              {t.addTask.cancel}
             </button>
           </div>
         </form>
       </div>
     </div>
   );
-}
-// Main App
-export default function App() {
-  const [token, setToken] = useState<string | null>(localStorage.getItem('authToken'));
-  const [, setUser] = useState<User | null>(null);
-
-  const handleLogin = (newToken: string, userData: User) => {
-    setToken(newToken);
-    setUser(userData);
-    localStorage.setItem('authToken', newToken);
-  };
-
-  const handleLogout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('authToken');
-  };
-
-  if (!token) {
-    return <LoginScreen onLogin={handleLogin} />;
-  }
-
-  return <WeeklyView token={token} onLogout={handleLogout} />;
 }
