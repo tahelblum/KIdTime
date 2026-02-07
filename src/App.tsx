@@ -91,7 +91,7 @@ const translations = {
       topicsPlaceholder: 'כל נושא בשורה נפרדת',
       materials: 'חומרי לימוד'
     },
-    s: {
+    settings: {
       title: 'הגדרות',
       language: 'שפה',
       changeLanguage: 'שנה שפה',
@@ -107,7 +107,7 @@ const translations = {
       title: 'TimeKids',
       logout: 'Logout',
       loading: 'Loading...',
-      s: 'Settings',
+      settings: 'Settings',
       back: 'Back'
     },
     login: {
@@ -196,7 +196,6 @@ const translations = {
     }
   }
 };
-
 // ============================================
 // TYPES
 // ============================================
