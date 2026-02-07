@@ -720,9 +720,8 @@ function ChildSelector({
     </div>
   );
 }
-
 // ============================================
-// ADD CHILD MODAL
+// ADD CHILD MODAL (תיקון - בית ספר אופציונלי)
 // ============================================
 function AddChildModal({
   token,
@@ -745,18 +744,25 @@ function AddChildModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // בדיקה רק ששם וכיתה מלאים (בית ספר אופציונלי)
+    if (!name.trim() || !grade.trim()) {
+      alert(t.dir === 'rtl' ? 'נא למלא שם וכיתה' : 'Please fill name and grade');
+      return;
+    }
+    
     setLoading(true);
     try {
       await api.addChild(token, {
-        name,
-        grade,
-        school_name: schoolName,
+        name: name.trim(),
+        grade: grade.trim(),
+        school_name: schoolName.trim() || undefined, // שולח רק אם יש ערך
         language: childLanguage
       });
       await onAdded();
       onClose();
     } catch (err) {
-      alert('Error adding child');
+      alert(t.dir === 'rtl' ? 'שגיאה בהוספת ילד' : 'Error adding child');
     } finally {
       setLoading(false);
     }
@@ -768,32 +774,46 @@ function AddChildModal({
         <h2 className="text-xl font-bold mb-4">{t.selectChild.addNewChild}</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder={t.login.childName}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
-            required
-          />
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              {t.login.childName} <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              placeholder={t.login.childName}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl focus:border-indigo-500 outline-none"
+              required
+            />
+          </div>
           
-          <input
-            type="text"
-            placeholder={t.login.childGrade}
-            value={grade}
-            onChange={(e) => setGrade(e.target.value)}
-            className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
-            required
-          />
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              {t.login.childGrade} <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              placeholder={t.dir === 'rtl' ? 'למשל: ה׳' : 'e.g., 5th'}
+              value={grade}
+              onChange={(e) => setGrade(e.target.value)}
+              className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl focus:border-indigo-500 outline-none"
+              required
+            />
+          </div>
           
-          <input
-            type="text"
-            placeholder={t.login.childSchool}
-            value={schoolName}
-            onChange={(e) => setSchoolName(e.target.value)}
-            className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl"
-            required
-          />
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              {t.login.childSchool} <span className="text-slate-400 text-xs">({t.addTask.dateOptional})</span>
+            </label>
+            <input
+              type="text"
+              placeholder={t.dir === 'rtl' ? 'למשל: בית ספר הרצל' : 'e.g., Lincoln Elementary'}
+              value={schoolName}
+              onChange={(e) => setSchoolName(e.target.value)}
+              className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl focus:border-indigo-500 outline-none"
+            />
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -803,24 +823,24 @@ function AddChildModal({
               <button
                 type="button"
                 onClick={() => setChildLanguage('he')}
-                className={`py-2 rounded-lg ${
+                className={`py-2 rounded-lg transition-all ${
                   childLanguage === 'he'
-                    ? 'bg-indigo-500 text-white'
-                    : 'bg-slate-100 text-slate-600'
+                    ? 'bg-indigo-500 text-white shadow-md'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
-                עברית
+                🇮🇱 עברית
               </button>
               <button
                 type="button"
                 onClick={() => setChildLanguage('en')}
-                className={`py-2 rounded-lg ${
+                className={`py-2 rounded-lg transition-all ${
                   childLanguage === 'en'
-                    ? 'bg-indigo-500 text-white'
-                    : 'bg-slate-100 text-slate-600'
+                    ? 'bg-indigo-500 text-white shadow-md'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
-                English
+                🇺🇸 English
               </button>
             </div>
           </div>
@@ -828,15 +848,15 @@ function AddChildModal({
           <div className="flex gap-2 pt-2">
             <button
               type="submit"
-              disabled={loading}
-              className="flex-1 bg-indigo-500 text-white py-3 rounded-xl font-bold"
+              disabled={loading || !name.trim() || !grade.trim()}
+              className="flex-1 bg-indigo-500 text-white py-3 rounded-xl font-bold hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {loading ? t.app.loading : t.login.addChild}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-slate-200 text-slate-700 py-3 rounded-xl font-bold"
+              className="flex-1 bg-slate-200 text-slate-700 py-3 rounded-xl font-bold hover:bg-slate-300"
             >
               {t.addTask.cancel}
             </button>
