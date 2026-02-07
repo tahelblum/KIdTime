@@ -549,7 +549,13 @@ function ChildSelector({
   const loadChildren = async () => {
     try {
       const data = await api.getChildren(token);
-      setChildren(data.children || []);
+      const childrenList = data.children || [];
+      setChildren(childrenList);
+      
+      // אם אין ילדים - פתח אוטומטית את מסך הוספת ילד
+      if (childrenList.length === 0) {
+        setShowAddChild(true);
+      }
     } catch (err) {
       console.error('Error loading children:', err);
     } finally {
@@ -561,6 +567,31 @@ function ChildSelector({
     return (
       <div className="min-h-screen flex items-center justify-center">
         {t.app.loading}
+      </div>
+    );
+  }
+
+  // אם אין ילדים ולא פתוח מודל - הצג הודעה
+  if (children.length === 0 && !showAddChild) {
+    return (
+      <div dir={t.dir} className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl p-8 shadow-2xl text-center max-w-md">
+          <div className="text-6xl mb-4">👨‍👩‍👧‍👦</div>
+          <h2 className="text-2xl font-bold mb-4">
+            {t.dir === 'rtl' ? 'בואו נתחיל!' : "Let's Get Started!"}
+          </h2>
+          <p className="text-slate-600 mb-6">
+            {t.dir === 'rtl' 
+              ? 'כדי להתחיל, הוסף את הילד הראשון שלך'
+              : 'To begin, add your first child'}
+          </p>
+          <button
+            onClick={() => setShowAddChild(true)}
+            className="bg-indigo-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-600"
+          >
+            {t.selectChild.addNewChild}
+          </button>
+        </div>
       </div>
     );
   }
@@ -595,7 +626,7 @@ function ChildSelector({
                   {child.name}
                 </h3>
                 <p className="text-sm text-slate-500">
-                  {child.grade} • {child.school_name}
+                  {child.grade} {child.school_name && `• ${child.school_name}`}
                 </p>
               </button>
             ))}
@@ -617,13 +648,18 @@ function ChildSelector({
         <AddChildModal
           token={token}
           language={user.language}
-          onClose={() => setShowAddChild(false)}
+          onClose={() => {
+            // אם אין ילדים - אל תסגור את המודל
+            if (children.length === 0) return;
+            setShowAddChild(false);
+          }}
           onAdded={loadChildren}
         />
       )}
     </div>
   );
 }
+
 // ============================================
 // ADD CHILD MODAL (תיקון - בית ספר אופציונלי)
 // ============================================
