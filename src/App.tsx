@@ -244,14 +244,6 @@ interface Test {
   topics?: string[];
 }
 
-interface StudyMaterial {
-  material_id: number;
-  session_id: number;
-  title: string;
-  type: 'link' | 'file' | 'note';
-  content: string;
-}
-
 // ============================================
 // API FUNCTIONS
 // ============================================
