@@ -857,7 +857,7 @@ function AddChildModal({
 }
 
 // ============================================
-// WEEKLY VIEW COMPONENT
+// WEEKLY VIEW COMPONENT (תיקון מלא)
 // ============================================
 function WeeklyView({ 
   token, 
@@ -1208,35 +1208,17 @@ function WeeklyView({
         />
       )}
 
-{showSettings && (
-  <SettingsModal
-    user={user}
-    currentLanguage={selectedChild.language || user.language}
-    onClose={() => setShowSettings(false)}
-    onLanguageChange={async (newLang) => {
-      await api.updateUserLanguage(token, newLang);
-      window.location.reload();
-    }}
-  />
-)}
-
-אפשרות חלופית - תיקון מהיר:
-אם אתה רוצה פשוט להוסיף @ts-ignore (לא מומלץ אבל עובד):
-typescript// @ts-ignore - Will be used in future features
-interface StudySession {
-  // ...
-}
-ו:
-typescriptfunction SettingsModal({
-  token, // eslint-disable-line @typescript-eslint/no-unused-vars
-  user,
-  // ...
-אבל אני ממליץ על התיקון הנקי למעלה!
-עשה את השינויים ו-push שוב:
-bashgit add .
-git commit -m "Fix TypeScript errors"
-git push
-זה אמור לעבוד! 🚀
+      {showSettings && (
+        <SettingsModal
+          user={user}
+          currentLanguage={selectedChild.language || user.language}
+          onClose={() => setShowSettings(false)}
+          onLanguageChange={async (newLang) => {
+            await api.updateUserLanguage(token, newLang);
+            window.location.reload();
+          }}
+        />
+      )}
     </div>
   );
 }
