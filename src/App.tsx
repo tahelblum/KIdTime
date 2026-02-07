@@ -403,39 +403,17 @@ function LoginScreen({ onLogin }: { onLogin: (token: string, user: User) => void
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [language, setLanguage] = useState<'he' | 'en'>('he');
-  const [children, setChildren] = useState<Partial<Child>[]>([]);
-  const [showChildrenForm, setShowChildrenForm] = useState(false);
 
   const t = translations[language];
 
-  const addChild = () => {
-    setChildren([...children, { name: '', grade: '', school_name: '', language }]);
-  };
-
-  const removeChild = (index: number) => {
-    setChildren(children.filter((_, i) => i !== index));
-  };
-
-  const updateChild = (index: number, field: keyof Child, value: string) => {
-    const updated = [...children];
-    updated[index] = { ...updated[index], [field]: value };
-    setChildren(updated);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (isSignup && !showChildrenForm) {
-      setShowChildrenForm(true);
-      return;
-    }
-
     setError('');
     setLoading(true);
 
     try {
       const data = isSignup 
-        ? await api.signup(email, password, name, language, children)
+        ? await api.signup(email, password, name, language, []) // ← שלח מערך ריק
         : await api.login(email, password);
       
       if (data.authToken) {
@@ -449,80 +427,6 @@ function LoginScreen({ onLogin }: { onLogin: (token: string, user: User) => void
       setLoading(false);
     }
   };
-
-  if (showChildrenForm) {
-    return (
-      <div dir={t.dir} className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl p-8 shadow-2xl w-full max-w-2xl">
-          <h2 className="text-2xl font-bold text-center mb-6 text-slate-800">
-            {t.login.addChildren}
-          </h2>
-
-          <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
-            {children.map((child, index) => (
-              <div key={index} className="border-2 border-slate-200 rounded-xl p-4">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="font-bold text-slate-700">#{index + 1}</span>
-                  <button
-                    onClick={() => removeChild(index)}
-                    className="text-red-500 text-sm hover:text-red-700"
-                  >
-                    {t.login.removeChild}
-                  </button>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <input
-                    type="text"
-                    placeholder={t.login.childName}
-                    value={child.name || ''}
-                    onChange={(e) => updateChild(index, 'name', e.target.value)}
-                    className="px-3 py-2 border-2 border-slate-200 rounded-lg text-sm"
-                  />
-                  <input
-                    type="text"
-                    placeholder={t.login.childGrade}
-                    value={child.grade || ''}
-                    onChange={(e) => updateChild(index, 'grade', e.target.value)}
-                    className="px-3 py-2 border-2 border-slate-200 rounded-lg text-sm"
-                  />
-                  <input
-                    type="text"
-                    placeholder={t.login.childSchool}
-                    value={child.school_name || ''}
-                    onChange={(e) => updateChild(index, 'school_name', e.target.value)}
-                    className="col-span-2 px-3 py-2 border-2 border-slate-200 rounded-lg text-sm"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <button
-            onClick={addChild}
-            className="w-full mb-4 py-3 border-2 border-indigo-300 border-dashed rounded-xl text-indigo-500 font-bold hover:bg-indigo-50"
-          >
-            + {t.login.addChild}
-          </button>
-
-          <div className="flex gap-3">
-            <button
-              onClick={() => setShowChildrenForm(false)}
-              className="flex-1 bg-slate-200 text-slate-700 py-3 rounded-xl font-bold"
-            >
-              {t.app.back}
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={loading || children.length === 0}
-              className="flex-1 bg-indigo-500 text-white py-3 rounded-xl font-bold hover:bg-indigo-600 disabled:opacity-50"
-            >
-              {loading ? t.app.loading : t.login.continueRegistration}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div dir={t.dir} className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4">
