@@ -91,7 +91,7 @@ const translations = {
       topicsPlaceholder: 'כל נושא בשורה נפרדת',
       materials: 'חומרי לימוד'
     },
-    settings: {
+    s: {
       title: 'הגדרות',
       language: 'שפה',
       changeLanguage: 'שנה שפה',
@@ -107,7 +107,7 @@ const translations = {
       title: 'TimeKids',
       logout: 'Logout',
       loading: 'Loading...',
-      settings: 'Settings',
+      s: 'Settings',
       back: 'Back'
     },
     login: {
@@ -243,18 +243,6 @@ interface Test {
   duration_minutes: number;
   study_days: number;
   topics?: string[];
-}
-
-interface StudySession {
-  session_id: number;
-  test_id: number;
-  child_id: number;
-  day_of_week: number;
-  start_time: string;
-  end_time: string;
-  topics: string[];
-  is_completed: boolean;
-  materials: StudyMaterial[];
 }
 
 interface StudyMaterial {
@@ -1220,18 +1208,35 @@ function WeeklyView({
         />
       )}
 
-      {showSettings && (
-        <SettingsModal
-          token={token}
-          user={user}
-          currentLanguage={selectedChild.language || user.language}
-          onClose={() => setShowSettings(false)}
-          onLanguageChange={async (newLang) => {
-            await api.updateUserLanguage(token, newLang);
-            window.location.reload();
-          }}
-        />
-      )}
+{showSettings && (
+  <SettingsModal
+    user={user}
+    currentLanguage={selectedChild.language || user.language}
+    onClose={() => setShowSettings(false)}
+    onLanguageChange={async (newLang) => {
+      await api.updateUserLanguage(token, newLang);
+      window.location.reload();
+    }}
+  />
+)}
+
+אפשרות חלופית - תיקון מהיר:
+אם אתה רוצה פשוט להוסיף @ts-ignore (לא מומלץ אבל עובד):
+typescript// @ts-ignore - Will be used in future features
+interface StudySession {
+  // ...
+}
+ו:
+typescriptfunction SettingsModal({
+  token, // eslint-disable-line @typescript-eslint/no-unused-vars
+  user,
+  // ...
+אבל אני ממליץ על התיקון הנקי למעלה!
+עשה את השינויים ו-push שוב:
+bashgit add .
+git commit -m "Fix TypeScript errors"
+git push
+זה אמור לעבוד! 🚀
     </div>
   );
 }
@@ -1650,13 +1655,11 @@ function UploadScheduleModal({
 // SETTINGS MODAL
 // ============================================
 function SettingsModal({
-  token,
   user,
   currentLanguage,
   onClose,
   onLanguageChange
 }: {
-  token: string;
   user: User;
   currentLanguage: 'he' | 'en';
   onClose: () => void;
