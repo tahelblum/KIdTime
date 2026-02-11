@@ -246,6 +246,8 @@ interface Test {
 // ============================================
 // API FUNCTIONS
 // ============================================
+
+//login//
 const api = {
   async login(email: string, password: string) {
     const res = await fetch(`${API_URL}/auth/login1`, {
@@ -256,6 +258,7 @@ const api = {
     return res.json();
   },
   
+  //signup//
   async signup(email: string, password: string, name: string, language: 'he' | 'en', children: Partial<Child>[]) {
     const res = await fetch(`${API_URL}/auth/signup1`, {
       method: 'POST',
@@ -264,15 +267,14 @@ const api = {
     });
     return res.json();
   },
+  
+  //getChildren//
 const api = {
-  // פונקציה להבאת ילדים
+  // שורה 267: ודאי שאין כאן const ושיש נקודתיים
   getChildren: async () => {
     const token = localStorage.getItem('token');
- 
-    if (!token) {
-      console.warn("No token found");
-      return [];
-    }
+    if (!token) return [];
+
     try {
       const response = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE/children', {
         method: 'GET',
@@ -281,17 +283,14 @@ const api = {
           'Authorization': `Bearer ${token}`
         }
       });
-      if (!response.ok) {
-        throw new Error('Failed to fetch children');
-      }
+      if (!response.ok) throw new Error('Failed to fetch');
       return await response.json();
     } catch (error: any) {
-      console.error("Error fetching children:", error);
+      console.error(error);
       return [];
     }
-  }, // הפסיק הזה קריטי להפרדה בין פונקציות באובייקט
+  }, // שורה 315: הפסיק הזה חייב להיות כאן אם יש פונקציה נוספת אחריו
 
-  // פונקציה להוספת ילד (השתמשי בזה כשאת מוסיפה ילד חדש)
   addChild: async (name: string) => {
     const token = localStorage.getItem('token');
     if (!token) return null;
@@ -305,26 +304,13 @@ const api = {
         },
         body: JSON.stringify({ name })
       });
-
       return await response.json();
     } catch (error: any) {
-      console.error("Error adding child:", error);
+      console.error(error);
       return null;
     }
   }
-};
-  async addChild(token: string, child: Partial<Child>) {
-    const res = await fetch(`${API_URL}/children`, {
-      method: 'POST',
-      headers: { 
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(child)
-    });
-    return res.json();
-  },
-  
+}; 
   async getTasks(token: string, childId: number, day?: number) {
     const url = day !== undefined 
       ? `${API_URL}/child/${childId}/day/${day}` 
