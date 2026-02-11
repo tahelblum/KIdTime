@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 
 const AUTH_API = 'https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE'; 
 const DATA_API = 'https://x8ki-letl-twmt.n7.xano.io/api:mUnseLT0';
-const CHILD_API = 'https://x8ki-letl-twmt.n7.xano.io/api:Bl_t3DKk';
 
 // --- TRANSLATIONS ---
 const translations: any = {
