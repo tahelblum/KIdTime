@@ -52,8 +52,7 @@ interface Task { id: number; child_id: number; title: string; type: 'school' | '
 interface User { user_id: number; name: string; email: string; role: 'parent' | 'child'; language: 'he' | 'en'; }
 interface Child { child_id: number; name: string; grade: string; school_name: string; language: 'he' | 'en'; }
 
-// --- API ---
-// src/App.tsx - TimeKids Final Build-Ready
+// src/App.tsx - TimeKids Final Build-Ready - Corrected Syntax
 import React, { useState, useEffect } from 'react';
 
 // כתובות ה-API לפי הקבוצות ב-Xano
@@ -62,34 +61,59 @@ const DATA_API = 'https://x8ki-letl-twmt.n7.xano.io/api:mUnseLT0';
 
 const api = {
   // קבוצת AUTH (wZUcfmuE)
-  login: async (email: string, p: string) => 
-    (await fetch(`${AUTH_API}/auth/login1`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: p }) })).json(),
+  login: async (email: string, p: string) => {
+    const res = await fetch(`${AUTH_API}/auth/login1`, { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify({ email, password: p }) 
+    });
+    return res.json();
+  },
 
-  signup: async (email: string, p: string, name: string, l: string, c: any[]) => 
-    (await fetch(`${AUTH_API}/auth/signup1`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: p, name, language: l, children: c }) })).json(),
+  signup: async (email: string, p: string, name: string, l: string, c: any[]) => {
+    const res = await fetch(`${AUTH_API}/auth/signup1`, { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify({ email, password: p, name, language: l, children: c }) 
+    });
+    return res.json();
+  },
 
   getChildren: async () => {
     const t = localStorage.getItem('token');
-    return (await fetch(`${AUTH_API}/children`, { headers: { 'Authorization': `Bearer ${t}` } })).json(),
+    const res = await fetch(`${AUTH_API}/children`, { 
+      headers: { 'Authorization': `Bearer ${t}` } 
+    });
+    return res.json();
+  },
 
   addChild: async (data: any) => {
     const t = localStorage.getItem('token');
-    return (await fetch(`${AUTH_API}/children`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${t}` }, body: JSON.stringify(data) })).json();
+    const res = await fetch(`${AUTH_API}/children`, { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${t}` }, 
+      body: JSON.stringify(data) 
+    });
+    return res.json();
   },
 
   toggleTask: async (id: number) => {
     const t = localStorage.getItem('token');
-    return (await fetch(`${AUTH_API}/Toggle_task`, { 
+    const res = await fetch(`${AUTH_API}/Toggle_task`, { 
       method: 'POST', 
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${t}` }, 
       body: JSON.stringify({ task_id: id }) 
-    })).json();
+    });
+    return res.json();
   },
 
   // קבוצת DATA (mUnseLT0)
   getTasks: async (childId: number) => {
     const t = localStorage.getItem('token');
-    return (await fetch(`${DATA_API}/${childId}/week`, { headers: { 'Authorization': `Bearer ${t}` } })).json();
+    const res = await fetch(`${DATA_API}/${childId}/week`, { 
+      headers: { 'Authorization': `Bearer ${t}` } 
+    });
+    return res.json();
   }
 };
 // --- HELPERS ---
