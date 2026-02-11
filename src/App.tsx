@@ -265,40 +265,7 @@ const api = {
     return res.json();
   },
 
-// אובייקט ה-API המעודכן
-const api = {
-  // פונקציה להבאת ילדים - כבר לא צריכה לקבל פרמטר!
-  getChildren: async () => {
-    const token = localStorage.getItem('token'); 
-   
-    if (!token) {
-      console.warn("No authentication token found. User might not be logged in.");
-      return []; 
-    }
-    try {
-      const response = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE/children', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (response.status === 401) {
-        console.error("401 Unauthorized: המפתח לא תקין או פג תוקף.");
-        return [];
-      }
 
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
-      return await response.json();
-
-    } catch (error) {
-      console.error("getChildren Fetch Error:", error);
-      return [];
-    }
-  }
-};
   async addChild(token: string, child: Partial<Child>) {
     const res = await fetch(`${API_URL}/children`, {
       method: 'POST',
