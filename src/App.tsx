@@ -1,10 +1,5 @@
 // src/App.tsx - TimeKids Full Application v2.0
 import React, { useState, useEffect } from 'react';
-
-interface LoginCredentials {
-  email: string;
-  password?: string;
-}
 const API_URL = 'https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE';
 
 // ============================================
@@ -1670,27 +1665,12 @@ export default function App() {
       setUser(JSON.parse(savedUser));
     }
   }, []);
-const handleLogin = async (credentials: LoginCredentials) => {
-  try { // ה-try חייב להיות כאן!
-    const response = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials)
-    });
-
-    if (!response.ok) {
-      throw new Error('Login failed');
-    }
-
-    const data = await response.json();
-    if (data.authToken) {
-      localStorage.setItem('token', data.authToken);
-      window.location.reload(); 
-    }
-  } catch (error) { // ה-catch חייב לבוא אחרי הבלוק של ה-try
-    console.error("Login error:", error);
-  }
-};
+const handleLogin = (newToken: string, userData: User) => {
+    setToken(newToken);
+    setUser(userData);
+    localStorage.setItem('authToken', newToken);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
   
   const handleLogout = () => {
     setToken(null);
