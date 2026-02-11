@@ -52,13 +52,7 @@ interface Task { id: number; child_id: number; title: string; type: 'school' | '
 interface User { user_id: number; name: string; email: string; role: 'parent' | 'child'; language: 'he' | 'en'; }
 interface Child { child_id: number; name: string; grade: string; school_name: string; language: 'he' | 'en'; }
 
-// src/App.tsx - TimeKids Final Build-Ready - Corrected Syntax
-import React, { useState, useEffect } from 'react';
-
-// כתובות ה-API לפי הקבוצות ב-Xano
-const AUTH_API = 'https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE'; 
-const DATA_API = 'https://x8ki-letl-twmt.n7.xano.io/api:mUnseLT0';
-
+// --- API ---
 const api = {
   // קבוצת AUTH (wZUcfmuE)
   login: async (email: string, p: string) => {
