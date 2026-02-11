@@ -1,8 +1,9 @@
 // src/App.tsx - TimeKids Full Application v2.0 - Final Clean Build
 import React, { useState, useEffect } from 'react';
 
-const AUTH_API = 'https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE'; // לקבוצת ה-Auth
-const DATA_API = 'https://x8ki-letl-twmt.n7.xano.io/api:mUnseLT0'; // לקבוצת המשימות והילדים
+const AUTH_API = 'https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE'; 
+const DATA_API = 'https://x8ki-letl-twmt.n7.xano.io/api:mUnseLT0';
+const CHILD_API = 'https://x8ki-letl-twmt.n7.xano.io/api:Bl_t3DKk';
 
 // --- TRANSLATIONS ---
 const translations: any = {
@@ -53,36 +54,31 @@ interface Child { child_id: number; name: string; grade: string; school_name: st
 
 // --- API ---
 const api = {
-  // פונקציות שמשתמשות ב-AUTH_API (הקבוצה הישנה)
+  // קבוצה א' (wZUcfmuE)
   login: async (email: string, p: string) => 
     (await fetch(`${AUTH_API}/auth/login1`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: p }) })).json(),
 
-  signup: async (email: string, p: string, name: string, l: string, c: any[]) => 
-    (await fetch(`${AUTH_API}/auth/signup1`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: p, name, language: l, children: c }) })).json(),
-
-  // פונקציות שמשתמשות ב-DATA_API (הקבוצה החדשה)
   getChildren: async () => {
     const t = localStorage.getItem('token');
-    return (await fetch(`${DATA_API}/children`, { headers: { 'Authorization': `Bearer ${t}` } })).json();
+    return (await fetch(`${AUTH_API}/children`, { headers: { 'Authorization': `Bearer ${t}` } })).json();
   },
 
-  addChild: async (data: any) => {
-    const t = localStorage.getItem('token');
-    return (await fetch(`${DATA_API}/children`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${t}` }, body: JSON.stringify(data) })).json();
-  },
-
-  getTasks: async (childId: number) => {
-    const t = localStorage.getItem('token');
-    // כאן השתמשנו בכתובת המדויקת ששלחת: DATA_API/{id}/week
-    return (await fetch(`${DATA_API}/${childId}/week`, { headers: { 'Authorization': `Bearer ${t}` } })).json();
-  },
-
+  // כאן התיקון הקריטי: Toggle_task נמצא ב-AUTH_API לפי הלינק שלך
   toggleTask: async (id: number) => {
     const t = localStorage.getItem('token');
-    return (await fetch(`${DATA_API}/Toggle_task`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${t}` }, body: JSON.stringify({ task_id: id }) })).json();
+    return (await fetch(`${AUTH_API}/Toggle_task`, { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${t}` }, 
+      body: JSON.stringify({ task_id: id }) 
+    })).json();
+  },
+
+  // קבוצה ב' (mUnseLT0)
+  getTasks: async (childId: number) => {
+    const t = localStorage.getItem('token');
+    return (await fetch(`${DATA_API}/${childId}/week`, { headers: { 'Authorization': `Bearer ${t}` } })).json();
   }
 };
-
 // --- HELPERS ---
 const getTypeColors = (type: string) => {
   const c: any = {
