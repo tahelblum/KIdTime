@@ -53,6 +53,7 @@ interface Child { child_id: number; name: string; grade: string; school_name: st
 
 // --- API ---
 const api = {
+  // התחברות
   login: async (email: string, p: string) => {
     const res = await fetch(`${AUTH_API}/auth/login1`, { 
       method: 'POST', 
@@ -62,6 +63,7 @@ const api = {
     return res.json();
   },
 
+  // הרשמה
   signup: async (email: string, p: string, name: string, l: string, c: any[]) => {
     const res = await fetch(`${AUTH_API}/auth/signup1`, { 
       method: 'POST', 
@@ -71,6 +73,7 @@ const api = {
     return res.json();
   },
 
+  // משיכת ילדים
   getChildren: async () => {
     const t = localStorage.getItem('token');
     const res = await fetch(`${AUTH_API}/children`, { 
@@ -79,21 +82,36 @@ const api = {
     return res.json();
   },
 
-  // תיקון קריטי: הכתובת היא DATA_API/{id}/week ללא המילה child
-  getTasks: async (childId: number) => {
+  // --- הוספת הפונקציה החסרה שגרמה לשגיאה ---
+  addChild: async (data: any) => {
     const t = localStorage.getItem('token');
-    const res = await fetch(`${DATA_API}/${childId}/week`, { 
-      headers: { 'Authorization': `Bearer ${t}` } 
+    const res = await fetch(`${AUTH_API}/children`, { 
+      method: 'POST', 
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${t}` 
+      }, 
+      body: JSON.stringify(data) 
     });
     return res.json();
   },
 
+  // סימון משימה כבוצעה
   toggleTask: async (id: number) => {
     const t = localStorage.getItem('token');
     const res = await fetch(`${AUTH_API}/Toggle_task`, { 
       method: 'POST', 
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${t}` }, 
       body: JSON.stringify({ task_id: id }) 
+    });
+    return res.json();
+  },
+
+  // משיכת משימות מהקבוצה השנייה
+  getTasks: async (childId: number) => {
+    const t = localStorage.getItem('token');
+    const res = await fetch(`${DATA_API}/${childId}/week`, { 
+      headers: { 'Authorization': `Bearer ${t}` } 
     });
     return res.json();
   }
