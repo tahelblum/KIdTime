@@ -205,23 +205,51 @@ function WeeklyView({ selectedChild, onBack, onLogout }: { selectedChild: Child;
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedDay, setSelectedDay] = useState(new Date().getDay());
   const [loading, setLoading] = useState(true);
-  const t = translations[selectedChild.language];
+  
+  // הגנה: וודאות שיש שפה מוגדרת כדי למנוע קריסה של Translations
+  const currentLang = selectedChild.language || 'he';
+  const t = translations[currentLang];
 
   const load = async () => {
+    // חילוץ המזהה - בודק גם child_id וגם id (למקרה של אי התאמה מול Xano)
+    const cid = selectedChild.child_id || (selectedChild as any).id;
+    
+    if (!cid) {
+      console.error("Missing child ID in selectedChild:", selectedChild);
+      setLoading(false);
+      return;
+    }
+
     try {
-      const d = await api.getTasks(selectedChild.child_id);
-      setTasks(d?.task || []);
-    } catch { setTasks([]); } finally { setLoading(false); }
+      setLoading(true);
+      const d = await api.getTasks(cid);
+      // טיפול בתגובה: Xano יכול להחזיר אובייקט עם שדה task או מערך ישיר
+      const tasksArray = d?.task || (Array.isArray(d) ? d : []);
+      setTasks(tasksArray);
+    } catch (err) {
+      console.error('Error loading tasks:', err);
+      setTasks([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { load(); }, [selectedChild]);
+  useEffect(() => {
+    load();
+  }, [selectedChild]);
 
   const toggle = async (id: number) => {
-    await api.toggleTask(id);
-    load();
+    try {
+      await api.toggleTask(id);
+      await load(); // רענון הרשימה לאחר העדכון
+    } catch (err) {
+      console.error('Error toggling task:', err);
+    }
   };
 
-  const dayTasks = tasks.filter(tk => tk.day_of_week === selectedDay).sort((a,b) => a.start_time.localeCompare(b.start_time));
+  const dayTasks = tasks.filter(tk => tk.day_of_week === selectedDay)
+    .sort((a, b) => a.start_time.localeCompare(b.start_time));
+    
   const progress = dayTasks.length ? (dayTasks.filter(tk => tk.is_done).length / dayTasks.length) * 100 : 0;
 
   if (loading) return <div className="min-h-screen flex items-center justify-center">{t.app.loading}</div>;
@@ -230,51 +258,85 @@ function WeeklyView({ selectedChild, onBack, onLogout }: { selectedChild: Child;
     <div dir={t.dir} className="min-h-screen bg-slate-50 p-4">
       <div className="max-w-md mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <button onClick={onBack} className="text-2xl">🔙</button>
-          <h1 className="text-xl font-bold">{selectedChild.name}</h1>
-          <button onClick={onLogout} className="text-slate-400 text-sm">{t.app.logout}</button>
+          <button onClick={onBack} className="text-2xl hover:scale-110 transition-transform">🔙</button>
+          <div className="text-center">
+             <h1 className="text-xl font-bold text-slate-800">{selectedChild.name}</h1>
+             <p className="text-xs text-slate-500">{selectedChild.grade}</p>
+          </div>
+          <button onClick={onLogout} className="text-slate-400 text-sm hover:text-red-500 transition-colors">{t.app.logout}</button>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto mb-6 pb-2">
+        {/* בחירת ימים */}
+        <div className="flex gap-2 overflow-x-auto mb-6 pb-2 no-scrollbar">
           {t.days.map((d: string, i: number) => (
-            <button key={i} onClick={() => setSelectedDay(i)} className={`flex-shrink-0 w-12 h-16 rounded-xl flex flex-col items-center justify-center transition-all ${selectedDay === i ? 'bg-indigo-500 text-white shadow-lg' : 'bg-white'}`}>
-              <span className="text-[10px] opacity-60">{d[0]}</span>
-              <span className="font-bold">{i+1}</span>
+            <button 
+              key={i} 
+              onClick={() => setSelectedDay(i)} 
+              className={`flex-shrink-0 w-12 h-16 rounded-xl flex flex-col items-center justify-center transition-all ${
+                selectedDay === i ? 'bg-indigo-500 text-white shadow-lg scale-105' : 'bg-white text-slate-600 shadow-sm'
+              }`}
+            >
+              <span className="text-[10px] opacity-70 uppercase">{d.substring(0, 3)}</span>
+              <span className="font-bold">{i + 1}</span>
             </button>
           ))}
         </div>
 
-        <div className="bg-white rounded-3xl p-6 shadow-sm mb-6">
+        {/* פס התקדמות */}
+        <div className="bg-white rounded-3xl p-6 shadow-sm mb-6 border border-slate-100">
           <div className="flex justify-between items-center mb-4">
-            <span className="font-bold">{t.tasks.myProgress}</span>
-            <span className="text-indigo-500">{Math.round(progress)}%</span>
+            <span className="font-bold text-slate-700">{t.tasks.myProgress}</span>
+            <span className="text-indigo-600 font-bold">{Math.round(progress)}%</span>
           </div>
-          <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div className="h-full bg-indigo-500 transition-all duration-500" style={{ width: `${progress}%` }} />
+          <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-indigo-400 to-indigo-600 transition-all duration-700 ease-out" 
+              style={{ width: `${progress}%` }} 
+            />
           </div>
         </div>
 
-        <div className="space-y-3">
+        {/* רשימת משימות */}
+        <div className="space-y-3 pb-20">
           {dayTasks.map(tk => {
             const colors = getTypeColors(tk.type);
             return (
-              <button key={tk.id} onClick={() => toggle(tk.id)} className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${colors.bg} ${colors.border} ${tk.is_done ? 'opacity-50' : ''}`}>
-                <span className="text-2xl">{colors.icon}</span>
-                <div className="flex-1 text-right">
-                  <p className="text-xs text-slate-500">{tk.start_time} - {tk.end_time}</p>
-                  <p className={`font-bold ${tk.is_done ? 'line-through' : ''}`}>{tk.title}</p>
+              <button 
+                key={tk.id} 
+                onClick={() => toggle(tk.id)} 
+                className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-200 ${
+                  colors.bg
+                } ${colors.border} ${
+                  tk.is_done ? 'opacity-40 grayscale-[0.5]' : 'shadow-sm active:scale-95'
+                }`}
+              >
+                <span className="text-3xl">{colors.icon}</span>
+                <div className={`flex-1 ${t.dir === 'rtl' ? 'text-right' : 'text-left'}`}>
+                  <p className="text-xs text-slate-500 font-medium">{tk.start_time} - {tk.end_time}</p>
+                  <p className={`font-bold text-slate-800 ${tk.is_done ? 'line-through' : ''}`}>
+                    {tk.title}
+                  </p>
                 </div>
-                <div className={`w-6 h-6 rounded-full border-2 ${tk.is_done ? 'bg-green-500 border-green-500' : 'bg-white border-slate-300'}`} />
+                <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-colors ${
+                  tk.is_done ? 'bg-green-500 border-green-500 text-white' : 'bg-white border-slate-300'
+                }`}>
+                  {tk.is_done && <span className="text-sm">✓</span>}
+                </div>
               </button>
             );
           })}
-          {dayTasks.length === 0 && <p className="text-center text-slate-400 py-12">{t.tasks.noTasks}</p>}
+          
+          {dayTasks.length === 0 && (
+            <div className="text-center py-16">
+              <div className="text-5xl mb-4 opacity-20">📅</div>
+              <p className="text-slate-400 font-medium">{t.tasks.noTasks}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
-
 // --- MAIN APP ---
 export default function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
