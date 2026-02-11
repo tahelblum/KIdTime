@@ -1667,13 +1667,47 @@ export default function App() {
     }
   }, []);
 
-  const handleLogin = (newToken: string, userData: User) => {
-    setToken(newToken);
-    setUser(userData);
-    localStorage.setItem('authToken', newToken);
-    localStorage.setItem('user', JSON.stringify(userData));
-  };
+const handleLogin = async (credentials: LoginCredentials) => {
+  try {
+    const response = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials)
+    });
+        if (!response.ok) {
+      throw new Error(`Login failed with status: ${response.status}`);
+    }
 
+    const data = await response.json();
+
+    if (data.authToken) {
+      // כאן אנחנו פותרים את בעיית ה-401 לעתיד!
+      localStorage.setItem('token', data.authToken);
+      
+      console.log("Logged in successfully!");
+      window.location.reload(); 
+    }
+  } catch (error) {
+    console.error("Error during login process:", error);
+    alert("התחברות נכשלה, אנא בדקי את הפרטים");
+  }
+};
+
+    const data = await response.json();
+
+    if (data.authToken) {
+      // שמירת המפתח לשימוש עתידי (פותר את ה-401)
+      localStorage.setItem('token', data.authToken);
+      console.log("Logged in successfully!");
+      // כאן כדאי להוסיף רענון דף או ניתוב מחדש
+      window.location.reload(); 
+    } else {
+      console.error("Login failed: No token received");
+    }
+  } catch (error) {
+    console.error("Error during login:", error);
+  }
+};
   const handleLogout = () => {
     setToken(null);
     setUser(null);
