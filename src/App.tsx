@@ -155,15 +155,24 @@ function ChildSelector({ user, onSelectChild, onLogout }: { user: User; onSelect
         </div>
         <h2 className="text-xl mb-6 font-semibold">{t.selectChild.title}</h2>
         <div className="grid gap-4">
-          {children.map(c => (
-            <button key={c.child_id} onClick={() => onSelectChild(c)} className="bg-white p-6 rounded-2xl shadow-sm border-2 border-transparent hover:border-indigo-500 transition-all flex items-center gap-4">
-              <span className="text-4xl">👦</span>
-              <div className="text-right">
-                <p className="font-bold text-lg">{c.name}</p>
-                <p className="text-slate-500">{c.grade}</p>
-              </div>
-            </button>
-          ))}
+          {children.map((c: any) => (
+  <button 
+    key={c.child_id || c.id} 
+    onClick={() => onSelectChild(c)} 
+    className="bg-white p-6 rounded-2xl shadow-sm border-2 border-transparent hover:border-indigo-500 transition-all flex items-center gap-4 w-full"
+  >
+    <span className="text-4xl">👦</span>
+    <div className={t.dir === 'rtl' ? 'text-right' : 'text-left'}>
+      {/* כאן התיקון: בודק כמה אפשרויות לשם המשתנה */}
+      <p className="font-bold text-lg text-slate-800">
+        {c.name || c.child_name || "ילד ללא שם"}
+      </p>
+      <p className="text-slate-500 text-sm">
+        {c.grade || c.child_grade || ""}
+      </p>
+    </div>
+  </button>
+))}
           <button onClick={() => setShowAdd(true)} className="border-2 border-dashed border-slate-300 p-6 rounded-2xl text-slate-500 font-bold hover:bg-white transition-all">+ {t.selectChild.addNewChild}</button>
         </div>
       </div>
