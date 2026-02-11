@@ -247,17 +247,6 @@ interface Test {
 // ============================================
 // API FUNCTIONS
 // ============================================
-const handleLogin = async (credentials) => {
-  const response = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(credentials)
-  });
-  const data = await response.json();
-
-  if (data.authToken) {
-    localStorage.setItem('token', data.authToken);
-  }
-};
 const api = {
   async login(email: string, password: string) {
     const res = await fetch(`${API_URL}/auth/login1`, {
