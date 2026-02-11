@@ -1,6 +1,10 @@
 // src/App.tsx - TimeKids Full Application v2.0
 import React, { useState, useEffect } from 'react';
 
+interface LoginCredentials {
+  email: string;
+  password?: string;
+}
 const API_URL = 'https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE';
 
 // ============================================
