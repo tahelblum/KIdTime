@@ -566,7 +566,7 @@ function ChildSelector({
 
   const loadChildren = async () => {
     try {
-      const data = await api.getChildren(token);
+      const data = await api.getChildren();
       const childrenList = data.children || [];
       setChildren(childrenList);
       
@@ -711,7 +711,7 @@ function AddChildModal({
     
     setLoading(true);
     try {
-      await api.addChild(token, {
+      await api.addChild( {
         name: name.trim(),
         grade: grade.trim(),
         school_name: schoolName.trim() || undefined, // שולח רק אם יש ערך
