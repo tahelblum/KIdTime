@@ -255,7 +255,7 @@ const api = {
     });
     return res.json();
   },
-  const api = {
+
   async signup(email: string, password: string, name: string, language: 'he' | 'en', children: Partial<Child>[]) {
     const res = await fetch(`${API_URL}/auth/signup1`, {
       method: 'POST',
@@ -264,14 +264,10 @@ const api = {
     });
     return res.json();
   },
-  
-  //getChildren//
-const api = {
-  // שורה 267: ודאי שאין כאן const ושיש נקודתיים
+
   getChildren: async () => {
     const token = localStorage.getItem('token');
     if (!token) return [];
-
     try {
       const response = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE/children', {
         method: 'GET',
@@ -286,12 +282,11 @@ const api = {
       console.error(error);
       return [];
     }
-  }, // שורה 315: הפסיק הזה חייב להיות כאן אם יש פונקציה נוספת אחריו
+  },
 
   addChild: async (name: string) => {
     const token = localStorage.getItem('token');
     if (!token) return null;
-
     try {
       const response = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE/children', {
         method: 'POST',
@@ -306,8 +301,8 @@ const api = {
       console.error(error);
       return null;
     }
-  }
-}; 
+  },
+
   async getTasks(token: string, childId: number, day?: number) {
     const url = day !== undefined 
       ? `${API_URL}/child/${childId}/day/${day}` 
@@ -317,7 +312,7 @@ const api = {
     });
     return res.json();
   },
-  
+
   async toggleTask(token: string, id: number) {
     const res = await fetch(`${API_URL}/Toggle_task`, {
       method: 'POST', 
@@ -329,7 +324,7 @@ const api = {
     });
     return res.json();
   },
-  
+
   async createTask(token: string, childId: number, task: Omit<Task, 'id' | 'is_done' | 'child_id' | 'icon'>) {
     const res = await fetch(`${API_URL}/child/${childId}/task`, {
       method: 'POST',
