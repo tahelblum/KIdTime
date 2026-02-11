@@ -246,8 +246,6 @@ interface Test {
 // ============================================
 // API FUNCTIONS
 // ============================================
-
-//login//
 const api = {
   async login(email: string, password: string) {
     const res = await fetch(`${API_URL}/auth/login1`, {
@@ -257,8 +255,7 @@ const api = {
     });
     return res.json();
   },
-  
-  //signup//
+  const api = {
   async signup(email: string, password: string, name: string, language: 'he' | 'en', children: Partial<Child>[]) {
     const res = await fetch(`${API_URL}/auth/signup1`, {
       method: 'POST',
