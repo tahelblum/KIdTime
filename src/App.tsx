@@ -1,10 +1,9 @@
-// src/App.tsx - TimeKids Full Application v2.0 - Final Build
+// src/App.tsx - TimeKids Full Application v2.0 - Final Clean Build
 import React, { useState, useEffect } from 'react';
 
 const API_URL = 'https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE';
 
-// --- TRANSLATIONS (Hebrew/English) ---
-// (השארתי את האובייקט שלך כפי שהוא, הוא מצוין)
+// --- TRANSLATIONS ---
 const translations: any = {
   he: {
     dir: 'rtl',
@@ -22,9 +21,7 @@ const translations: any = {
       nextTask: 'עכשיו צריך:', allDone: 'סיימת הכל! 🎉', noTasks: 'אין משימות ליום זה',
       myProgress: 'ההתקדמות שלי היום', congrats: '🌟 כל הכבוד! סיימת את כל המשימות! 🌟'
     },
-    addTask: { title: 'הוספת משימה', saveBtn: 'שמור', cancel: 'ביטול', dateOptional: 'אופציונלי' },
-    schedule: { uploadTitle: 'העלאת מערכת', uploadBtn: 'בחר קובץ', uploading: 'מעלה...' },
-    tests: { testTitle: 'הוספת מבחן', subjectPlaceholder: 'נושא', createStudyPlan: 'צור תכנית' },
+    addTask: { title: 'הוספת משימה', saveBtn: 'שמור', cancel: 'ביטול' },
     settings: { title: 'הגדרות', language: 'שפה', profile: 'פרופיל', hebrew: 'עברית', english: 'English' }
   },
   en: {
@@ -43,18 +40,15 @@ const translations: any = {
       nextTask: 'Next:', allDone: 'All Done!', noTasks: 'No tasks',
       myProgress: 'Progress', congrats: '🌟 Great job! 🌟'
     },
-    addTask: { title: 'Add Task', saveBtn: 'Save', cancel: 'Cancel', dateOptional: 'Optional' },
-    schedule: { uploadTitle: 'Upload', uploadBtn: 'Select File', uploading: 'Uploading...' },
-    tests: { testTitle: 'Add Test', subjectPlaceholder: 'Subject', createStudyPlan: 'Plan' },
+    addTask: { title: 'Add Task', saveBtn: 'Save', cancel: 'Cancel' },
     settings: { title: 'Settings', language: 'Language', profile: 'Profile', hebrew: 'עברית', english: 'English' }
   }
 };
 
 // --- TYPES ---
-interface Task { id: number; child_id: number; title: string; type: 'school' | 'hobby' | 'free' | 'test' | 'study'; day_of_week: number; start_time: string; end_time: string; is_done: boolean; frequent: boolean; event_date?: string; icon: string; is_overridden?: boolean; }
+interface Task { id: number; child_id: number; title: string; type: 'school' | 'hobby' | 'free' | 'test' | 'study'; day_of_week: number; start_time: string; end_time: string; is_done: boolean; frequent: boolean; icon: string; }
 interface User { user_id: number; name: string; email: string; role: 'parent' | 'child'; language: 'he' | 'en'; }
 interface Child { child_id: number; name: string; grade: string; school_name: string; language: 'he' | 'en'; }
-interface Test { test_id: number; child_id: number; subject: string; test_date: string; test_time: string; }
 
 // --- API ---
 const api = {
@@ -75,39 +69,17 @@ const api = {
   toggleTask: async (id: number) => {
     const t = localStorage.getItem('token');
     return (await fetch(`${API_URL}/Toggle_task`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${t}` }, body: JSON.stringify({ task_id: id }) })).json();
-  },
-  createTask: async (childId: number, task: any) => {
-    const t = localStorage.getItem('token');
-    return (await fetch(`${API_URL}/child/${childId}/task`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${t}` }, body: JSON.stringify(task) })).json();
-  },
-  uploadSchedule: async (childId: number, file: File) => {
-    const t = localStorage.getItem('token');
-    const fd = new FormData(); fd.append('schedule', file); fd.append('child_id', childId.toString());
-    return (await fetch(`${API_URL}/upload_schedule`, { method: 'POST', headers: { 'Authorization': `Bearer ${t}` }, body: fd })).json();
-  },
-  createTest: async (test: any) => {
-    const t = localStorage.getItem('token');
-    return (await fetch(`${API_URL}/tests`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${t}` }, body: JSON.stringify(test) })).json();
-  },
-  getTests: async (childId: number) => {
-    const t = localStorage.getItem('token');
-    return (await fetch(`${API_URL}/child/${childId}/tests`, { headers: { 'Authorization': `Bearer ${t}` } })).json();
-  },
-  updateUserLanguage: async (l: string) => {
-    const t = localStorage.getItem('token');
-    return (await fetch(`${API_URL}/user/language`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${t}` }, body: JSON.stringify({ language: l }) })).json();
   }
 };
 
 // --- HELPERS ---
-const timeToMinutes = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
 const getTypeColors = (type: string) => {
   const c: any = {
-    school: { bg: 'bg-blue-100', border: 'border-blue-300', icon: '📚', barColor: 'bg-blue-400' },
-    hobby: { bg: 'bg-green-100', border: 'border-green-300', icon: '⭐', barColor: 'bg-green-400' },
-    free: { bg: 'bg-amber-50', border: 'border-amber-200', icon: '🎮', barColor: 'bg-amber-400' },
-    test: { bg: 'bg-pink-50', border: 'border-pink-200', icon: '📝', barColor: 'bg-pink-400' },
-    study: { bg: 'bg-purple-50', border: 'border-purple-200', icon: '📖', barColor: 'bg-purple-400' }
+    school: { bg: 'bg-blue-100', border: 'border-blue-300', icon: '📚' },
+    hobby: { bg: 'bg-green-100', border: 'border-green-300', icon: '⭐' },
+    free: { bg: 'bg-amber-50', border: 'border-amber-200', icon: '🎮' },
+    test: { bg: 'bg-pink-50', border: 'border-pink-200', icon: '📝' },
+    study: { bg: 'bg-purple-50', border: 'border-purple-200', icon: '📖' }
   };
   return c[type] || c.school;
 };
@@ -139,8 +111,8 @@ function LoginScreen({ onLogin }: { onLogin: (t: string, u: User) => void }) {
       <div className="bg-white rounded-3xl p-8 shadow-2xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-center mb-6">{t.app.title}</h1>
         <div className="flex gap-2 mb-6">
-          <button onClick={() => setLanguage('he')} className={`flex-1 py-2 rounded-xl ${language === 'he' ? 'bg-indigo-500 text-white' : 'bg-slate-100'}`}>🇮🇱 עברית</button>
-          <button onClick={() => setLanguage('en')} className={`flex-1 py-2 rounded-xl ${language === 'en' ? 'bg-indigo-500 text-white' : 'bg-slate-100'}`}>🇺🇸 English</button>
+          <button onClick={() => setLanguage('he')} className={`flex-1 py-2 rounded-xl transition-all ${language === 'he' ? 'bg-indigo-500 text-white' : 'bg-slate-100'}`}>🇮🇱 עברית</button>
+          <button onClick={() => setLanguage('en')} className={`flex-1 py-2 rounded-xl transition-all ${language === 'en' ? 'bg-indigo-500 text-white' : 'bg-slate-100'}`}>🇺🇸 English</button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           {isSignup && <input type="text" placeholder={t.login.name} value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-3 border-2 rounded-xl" required />}
@@ -155,7 +127,7 @@ function LoginScreen({ onLogin }: { onLogin: (t: string, u: User) => void }) {
   );
 }
 
-function ChildSelector({ user, onSelectChild, onLogout }: { token: string; user: User; onSelectChild: (c: Child) => void; onLogout: () => void; }) {
+function ChildSelector({ user, onSelectChild, onLogout }: { user: User; onSelectChild: (c: Child) => void; onLogout: () => void; }) {
   const [children, setChildren] = useState<Child[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
@@ -215,8 +187,8 @@ function AddChildModal({ language, onClose, onAdded }: { language: 'he' | 'en', 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div dir={t.dir} className="bg-white rounded-3xl p-8 w-full max-w-sm">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={onClose}>
+      <div dir={t.dir} className="bg-white rounded-3xl p-8 w-full max-w-sm" onClick={e => e.stopPropagation()}>
         <h2 className="text-xl font-bold mb-6">{t.selectChild.addNewChild}</h2>
         <form onSubmit={submit} className="space-y-4">
           <input placeholder={t.login.childName} value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-3 border-2 rounded-xl" required />
@@ -229,7 +201,7 @@ function AddChildModal({ language, onClose, onAdded }: { language: 'he' | 'en', 
   );
 }
 
-function WeeklyView({ selectedChild, onBack, onLogout }: { token: string; user: User; selectedChild: Child; onBack: () => void; onLogout: () => void; }) {
+function WeeklyView({ selectedChild, onBack, onLogout }: { selectedChild: Child; onBack: () => void; onLogout: () => void; }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedDay, setSelectedDay] = useState(new Date().getDay());
   const [loading, setLoading] = useState(true);
@@ -314,22 +286,22 @@ export default function App() {
     if (saved) setUser(JSON.parse(saved));
   }, []);
 
-  const login = (t: string, u: User) => {
+  const handleLogin = (t: string, u: User) => {
     setToken(t); setUser(u);
     localStorage.setItem('token', t);
     localStorage.setItem('user', JSON.stringify(u));
   };
 
-  const logout = () => {
+  const handleLogout = () => {
     setToken(null); setUser(null); setSelectedChild(null);
     localStorage.clear();
   };
 
-  if (!token || !user) return <LoginScreen onLogin={login} />;
+  if (!token || !user) return <LoginScreen onLogin={handleLogin} />;
 
   return !selectedChild ? (
-    <ChildSelector token={token} user={user} onSelectChild={setSelectedChild} onLogout={logout} />
+    <ChildSelector user={user} onSelectChild={setSelectedChild} onLogout={handleLogout} />
   ) : (
-    <WeeklyView token={token} user={user} selectedChild={selectedChild} onBack={() => setSelectedChild(null)} onLogout={logout} />
+    <WeeklyView selectedChild={selectedChild} onBack={() => setSelectedChild(null)} onLogout={handleLogout} />
   );
 }
