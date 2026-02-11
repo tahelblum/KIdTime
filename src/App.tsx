@@ -264,8 +264,55 @@ const api = {
     });
     return res.json();
   },
+const api = {
+  // פונקציה להבאת ילדים
+  getChildren: async () => {
+    const token = localStorage.getItem('token');
+ 
+    if (!token) {
+      console.warn("No token found");
+      return [];
+    }
+    try {
+      const response = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE/children', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch children');
+      }
+      return await response.json();
+    } catch (error: any) {
+      console.error("Error fetching children:", error);
+      return [];
+    }
+  }, // הפסיק הזה קריטי להפרדה בין פונקציות באובייקט
 
+  // פונקציה להוספת ילד (השתמשי בזה כשאת מוסיפה ילד חדש)
+  addChild: async (name: string) => {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
 
+    try {
+      const response = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE/children', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name })
+      });
+
+      return await response.json();
+    } catch (error: any) {
+      console.error("Error adding child:", error);
+      return null;
+    }
+  }
+};
   async addChild(token: string, child: Partial<Child>) {
     const res = await fetch(`${API_URL}/children`, {
       method: 'POST',
