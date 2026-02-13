@@ -1,8 +1,62 @@
 // src/App.tsx - TimeKids Full Application v2.0 - Final Clean Build
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import ChildPairing from './components/ChildPairing';
+import ChildDashboard from './components/ChildDashboard';
 
+// --- API & CONSTANTS ---
 const AUTH_API = 'https://x8ki-letl-twmt.n7.xano.io/api:wZUcfmuE'; 
 const DATA_API = 'https://x8ki-letl-twmt.n7.xano.io/api:mUnseLT0';
+
+// --- MAIN APP ---
+export default function App() {
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [user, setUser] = useState<User | null>(null);
+  const [selectedChild, setSelectedChild] = useState<Child | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('user');
+    if (saved) setUser(JSON.parse(saved));
+  }, []);
+
+  const handleLogin = (t: string, u: User) => {
+    setToken(t); setUser(u);
+    localStorage.setItem('token', t);
+    localStorage.setItem('user', JSON.stringify(u));
+  };
+
+  const handleLogout = () => {
+    setToken(null); setUser(null); setSelectedChild(null);
+    localStorage.clear();
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Routes>
+        {/* --- נתיבים לילד (עצמאיים לחלוטין) --- */}
+        {/* דף הצימוד - לא דורש לוגין הורה */}
+        <Route path="/pair" element={<ChildPairing />} />
+        
+        {/* דאשבורד הילד - מזוהה לפי הטוקן ששמרנו ב-Pairing */}
+        <Route path="/child/dashboard" element={<ChildDashboard />} />
+
+        {/* --- נתיבי ההורה (הקוד המקורי שלך) --- */}
+        <Route path="/parent" element={
+          !token || !user ? (
+            <LoginScreen onLogin={handleLogin} />
+          ) : !selectedChild ? (
+            <ChildSelector user={user} onSelectChild={setSelectedChild} onLogout={handleLogout} />
+          ) : (
+            <WeeklyView selectedChild={selectedChild} onBack={() => setSelectedChild(null)} onLogout={handleLogout} />
+          )
+        } />
+
+        {/* ברירת מחדל: מי שנכנס לכתובת הראשית מופנה להורה */}
+        <Route path="/" element={<Navigate to="/parent" replace />} />
+      </Routes>
+    </div>
+  );
+}
 
 // --- TRANSLATIONS ---
 const translations: any = {
