@@ -444,33 +444,3 @@ function WeeklyView({ selectedChild, onBack, onLogout }: { selectedChild: Child;
     </div>
   );
 }
-// --- MAIN APP ---
-export default function App() {
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [user, setUser] = useState<User | null>(null);
-  const [selectedChild, setSelectedChild] = useState<Child | null>(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('user');
-    if (saved) setUser(JSON.parse(saved));
-  }, []);
-
-  const handleLogin = (t: string, u: User) => {
-    setToken(t); setUser(u);
-    localStorage.setItem('token', t);
-    localStorage.setItem('user', JSON.stringify(u));
-  };
-
-  const handleLogout = () => {
-    setToken(null); setUser(null); setSelectedChild(null);
-    localStorage.clear();
-  };
-
-  if (!token || !user) return <LoginScreen onLogin={handleLogin} />;
-
-  return !selectedChild ? (
-    <ChildSelector user={user} onSelectChild={setSelectedChild} onLogout={handleLogout} />
-  ) : (
-    <WeeklyView selectedChild={selectedChild} onBack={() => setSelectedChild(null)} onLogout={handleLogout} />
-  );
-}
